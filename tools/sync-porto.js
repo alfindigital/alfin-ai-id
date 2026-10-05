@@ -1,5 +1,6 @@
 // Sync link sections dari porto.alfindigital.com (single source of truth).
 // Rewrite blok antara <!-- LINKS:START --> dan <!-- LINKS:END --> di index.html.
+// Tiap lrow: lname (link utama) + lnote (deskripsi) + .gh opsional (repo open source).
 // Link yang juga ada di footer sosial diskip (sudah di-cover icon).
 const fs = require("fs");
 const path = require("path");
@@ -16,6 +17,7 @@ const FOOTER_SET = new Set([
   "https://wa.me/6289619093961",
 ]);
 
+const unesc = (s) => s.replace(/&amp;/g, "&").replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
 const slotFor = (url, idx) => {
@@ -25,6 +27,9 @@ const slotFor = (url, idx) => {
     : `<span class="idx">${String(idx).padStart(2, "0")}</span>`;
   return `<span class="slot">${inner}</span>`;
 };
+
+const metaFor = (gh) =>
+  `<span class="meta">${gh ? '<svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg>' : ""}<span class="arr">&#8599;</span></span>`;
 
 const descFor = (url) => {
   const u = new URL(url);
@@ -41,16 +46,21 @@ async function main() {
   // Pecah per kategori: <h2 class="kicker">nama</h2> ... sampai kicker berikutnya
   const parts = html.split(/<h2 class="kicker">/i).slice(1);
   const groups = [];
+  let oss = 0;
   for (const part of parts) {
     const name = part.slice(0, part.indexOf("<")).trim().toLowerCase();
     const links = [];
-    const re = /<a[^>]*href="(https?:\/\/[^"]+)"[^>]*>([^<]*)</g;
-    let m;
-    while ((m = re.exec(part))) {
+    const rows = part.match(/<li class="lrow">[\s\S]*?<\/li>/g) || [];
+    for (const row of rows) {
+      const m = row.match(/class="lname lk" href="([^"]+)"[^>]*>([^<]+)/);
+      if (!m) continue;
       const [, url, text] = m;
-      const title = text.trim();
-      if (!title || FOOTER_SET.has(url)) continue; // icon-only (repo src) & sosial footer diskip
-      links.push({ url, title });
+      const title = unesc(text.trim());
+      if (!title || FOOTER_SET.has(url)) continue;
+      const note = unesc((row.match(/class="lnote">([\s\S]*?)</) || [])[1] || "").trim();
+      const gh = (row.match(/class="gh" href="([^"]+)"/) || [])[1] || null;
+      if (gh) oss++;
+      links.push({ url, title, note, gh });
     }
     if (links.length) groups.push({ name, links });
   }
@@ -61,7 +71,7 @@ async function main() {
       const rows = g.links
         .map(
           (l, i) =>
-            `      <li><a href="${l.url}" target="_blank" rel="noopener">${slotFor(l.url, i + 1)}<span class="main"><span class="name">${esc(l.title)}</span><span class="desc">${esc(descFor(l.url))}</span></span><span class="arr">&#8599;</span></a></li>`,
+            `      <li><a href="${l.url}" target="_blank" rel="noopener">${slotFor(l.url, i + 1)}${metaFor(l.gh)}<span class="main"><span class="name">${esc(l.title)}</span><span class="desc">${esc(l.note || descFor(l.url))}</span></span></a></li>`,
         )
         .join("\n");
       return `  <section class="in in-${gi + 2}">\n    <p class="tag">// ${esc(g.name)}</p>\n    <ul class="links">\n${rows}\n    </ul>\n  </section>`;
@@ -76,7 +86,7 @@ async function main() {
   if (out === src) throw new Error("marker LINKS tidak ketemu di index.html");
   fs.writeFileSync(INDEX, out);
   const total = groups.reduce((n, g) => n + g.links.length, 0);
-  console.log(`synced: ${groups.length} section, ${total} link`);
+  console.log(`synced: ${groups.length} section, ${total} link, ${oss} open-source`);
   groups.forEach((g) => console.log(`  // ${g.name}: ${g.links.length}`));
 }
 

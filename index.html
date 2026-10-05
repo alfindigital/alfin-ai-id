@@ -78,8 +78,8 @@ svg{display:block}
 
 main{
   width:100%;
-  max-width:26rem;
-  padding:clamp(1.25rem,4vw,2rem) clamp(1.1rem,4vw,1.5rem) 2.5rem;
+  max-width:64rem;
+  padding:clamp(1.25rem,4vw,2.25rem) clamp(1.1rem,4vw,2.5rem) 2.5rem;
   display:flex;
   flex-direction:column;
   min-height:100dvh;
@@ -139,12 +139,20 @@ header .tools{display:flex;align-items:center}
   margin-bottom:.65rem;
 }
 section{margin-bottom:1.9rem}
-.links{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.links{
+  list-style:none;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:.55rem;
+}
+@media(min-width:34rem){.links{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:56rem){.links{grid-template-columns:repeat(4,1fr);gap:.65rem}}
 .links a{
-  display:flex;
-  align-items:center;
-  gap:.85rem;
-  padding:.75rem .95rem;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  grid-template-areas:"slot meta" "main main";
+  row-gap:.55rem;
+  padding:.75rem .8rem;
   background:var(--panel);
   border:1px solid var(--line);
   border-radius:10px;
@@ -153,15 +161,22 @@ section{margin-bottom:1.9rem}
   min-height:44px;
   transition:border-color .18s ease,transform .18s ease;
 }
-.links a:hover{border-color:var(--accent);transform:translateX(4px)}
-.links a:active{transform:translateX(4px) scale(.99)}
+.links a:hover{border-color:var(--accent);transform:translateY(-2px)}
+.links a:active{transform:translateY(-2px) scale(.99)}
 .slot{
-  width:2rem;
-  flex-shrink:0;
+  grid-area:slot;
+  min-width:1.4rem;
   display:flex;
   align-items:center;
-  justify-content:center;
 }
+.meta{
+  grid-area:meta;
+  justify-self:end;
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+}
+.meta .oss{width:.95rem;height:.95rem}
 .idx{
   font-family:"IBM Plex Mono",ui-monospace,monospace;
   font-size:.68rem;
@@ -169,29 +184,32 @@ section{margin-bottom:1.9rem}
 }
 .links a:hover .idx{color:var(--accent)}
 .links a:hover .ic{color:var(--accent)}
-.links .main{flex:1;min-width:0}
+.links .main{grid-area:main;min-width:0}
 .links .name{
   display:block;
   font-weight:700;
-  font-size:.95rem;
+  font-size:.92rem;
   letter-spacing:.01em;
-}
-.links .desc{
-  display:block;
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.7rem;
-  color:var(--ink-2);
-  margin-top:.12rem;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
+}
+.links .desc{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.68rem;
+  line-height:1.45;
+  color:var(--ink-2);
+  margin-top:.15rem;
+  overflow:hidden;
 }
 .links .arr{
   font-family:"IBM Plex Mono",ui-monospace,monospace;
   font-size:.85rem;
   color:var(--ink-2);
   transition:color .18s ease,transform .18s ease;
-  flex-shrink:0;
 }
 .links a:hover .arr{color:var(--accent);transform:translate(2px,-2px)}
 
@@ -241,86 +259,86 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
   <section class="in in-2">
     <p class="tag">// app</p>
     <ul class="links">
-      <li><a href="https://terusin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="main"><span class="name">Terusin</span><span class="desc">terusin.pages.dev</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://fokusin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="main"><span class="name">Fokusin</span><span class="desc">fokusin.pages.dev</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://beresin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">03</span></span><span class="main"><span class="name">Beresin</span><span class="desc">beresin.pages.dev</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://lamarbot.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">04</span></span><span class="main"><span class="name">LamarBot</span><span class="desc">lamarbot.pages.dev</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://barberai.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">05</span></span><span class="main"><span class="name">BarberAI</span><span class="desc">barberai.pages.dev</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://ukhtigo.vercel.app" target="_blank" rel="noopener"><span class="slot"><span class="idx">06</span></span><span class="main"><span class="name">UkhtiGo</span><span class="desc">ukhtigo.vercel.app</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://lezat.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">07</span></span><span class="main"><span class="name">Lezat</span><span class="desc">lezat.my.id</span></span><span class="arr">&#8599;</span></a></li>
+      <li><a href="https://terusin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Terusin</span><span class="desc">Offline habit tracker. Streaks, notes, zero accounts.</span></span></a></li>
+      <li><a href="https://fokusin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Fokusin</span><span class="desc">Offline pomodoro timer. No account, no ads.</span></span></a></li>
+      <li><a href="https://beresin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">03</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Beresin</span><span class="desc">Home and business service booking. PWA.</span></span></a></li>
+      <li><a href="https://lamarbot.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">04</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">LamarBot</span><span class="desc">Job application copilot for JobStreet and Glints.</span></span></a></li>
+      <li><a href="https://barberai.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">05</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">BarberAI</span><span class="desc">Barbershop booking PWA with WhatsApp checkout.</span></span></a></li>
+      <li><a href="https://ukhtigo.vercel.app" target="_blank" rel="noopener"><span class="slot"><span class="idx">06</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">UkhtiGo</span><span class="desc">Ride and delivery platform built for muslimah.</span></span></a></li>
+      <li><a href="https://lezat.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">07</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lezat</span><span class="desc">Local food ordering for Barlingmascakeb.</span></span></a></li>
     </ul>
   </section>
 
   <section class="in in-3">
     <p class="tag">// idx</p>
     <ul class="links">
-      <li><a href="https://lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">lotmetrik.my.id</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://des.lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="main"><span class="name">DES</span><span class="desc">des.lotmetrik.my.id</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://5.lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">03</span></span><span class="main"><span class="name">5% Ownership</span><span class="desc">5.lotmetrik.my.id</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://radar-x-beta.vercel.app" target="_blank" rel="noopener"><span class="slot"><span class="idx">04</span></span><span class="main"><span class="name">Radar-X</span><span class="desc">radar-x-beta.vercel.app</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://github.com/alfindigital/idx-avg" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="main"><span class="name">IDX Avg</span><span class="desc">github.com/alfindigital/idx-avg</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://github.com/alfindigital/scalc" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="main"><span class="name">Scalc</span><span class="desc">github.com/alfindigital/scalc</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://github.com/alfindigital/ddcal" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="main"><span class="name">DDCal</span><span class="desc">github.com/alfindigital/ddcal</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://github.com/alfindigital/tvw-index" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="main"><span class="name">TVW Index</span><span class="desc">github.com/alfindigital/tvw-index</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://github.com/alfindigital/wl-kit" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="main"><span class="name">WL-Kit</span><span class="desc">github.com/alfindigital/wl-kit</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://github.com/alfindigital/stockbit-sentimen" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="main"><span class="name">Stockbit Sentimen</span><span class="desc">github.com/alfindigital/stockbit-sentimen</span></span><span class="arr">&#8599;</span></a></li>
+      <li><a href="https://lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">Quantitative IDX stock education platform.</span></span></a></li>
+      <li><a href="https://des.lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">DES</span><span class="desc">IDX sharia securities dashboard, 2016-2026.</span></span></a></li>
+      <li><a href="https://5.lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">03</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">5% Ownership</span><span class="desc">Tracks IDX shareholders above the 5% line.</span></span></a></li>
+      <li><a href="https://radar-x-beta.vercel.app" target="_blank" rel="noopener"><span class="slot"><span class="idx">04</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Radar-X</span><span class="desc">Smart-money positioning map for IDX movers.</span></span></a></li>
+      <li><a href="https://github.com/alfindigital/idx-avg" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">IDX Avg</span><span class="desc">IDX averaging calculator.</span></span></a></li>
+      <li><a href="https://github.com/alfindigital/scalc" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Scalc</span><span class="desc">Stock calculator. Sizing and fees.</span></span></a></li>
+      <li><a href="https://github.com/alfindigital/ddcal" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">DDCal</span><span class="desc">Drawdown calculator.</span></span></a></li>
+      <li><a href="https://github.com/alfindigital/tvw-index" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">TVW Index</span><span class="desc">TradingView weight index calculator.</span></span></a></li>
+      <li><a href="https://github.com/alfindigital/wl-kit" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">WL-Kit</span><span class="desc">Watchlist toolkit for IDX traders.</span></span></a></li>
+      <li><a href="https://github.com/alfindigital/stockbit-sentimen" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Stockbit Sentimen</span><span class="desc">Retail sentiment toolkit from Stockbit data.</span></span></a></li>
     </ul>
   </section>
 
   <section class="in in-4">
     <p class="tag">// idx bot</p>
     <ul class="links">
-      <li><a href="https://t.me/lotmetrik_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">@lotmetrik_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/foreignflow_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">Foreign Flow</span><span class="desc">@foreignflow_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/lotmetrikbid_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">LotmetrikBid</span><span class="desc">@lotmetrikbid_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/idxbt_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">IDXBT</span><span class="desc">@idxbt_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/broker_summary_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">Broker Summary</span><span class="desc">@broker_summary_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/lotmetrikalert_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">LotmetrikAlert</span><span class="desc">@lotmetrikalert_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/lotmetrikdiv_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">LotmetrikDiv</span><span class="desc">@lotmetrikdiv_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/lotmetrikin_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">Lotmetrik CIA</span><span class="desc">@lotmetrikin_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/Lotmetrikbdm_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">LotmetrikBDM</span><span class="desc">@Lotmetrikbdm_bot</span></span><span class="arr">&#8599;</span></a></li>
+      <li><a href="https://t.me/lotmetrik_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">17-scraper IDX market intelligence bot.</span></span></a></li>
+      <li><a href="https://t.me/foreignflow_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Foreign Flow</span><span class="desc">Daily foreign buy and sell flow tracker.</span></span></a></li>
+      <li><a href="https://t.me/lotmetrikbid_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">LotmetrikBid</span><span class="desc">Bid-offer radar for IDX movers.</span></span></a></li>
+      <li><a href="https://t.me/idxbt_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">IDXBT</span><span class="desc">Bandarmology tape reader.</span></span></a></li>
+      <li><a href="https://t.me/broker_summary_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Broker Summary</span><span class="desc">IDX broker summary on demand.</span></span></a></li>
+      <li><a href="https://t.me/lotmetrikalert_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">LotmetrikAlert</span><span class="desc">Price and signal alerts.</span></span></a></li>
+      <li><a href="https://t.me/lotmetrikdiv_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">LotmetrikDiv</span><span class="desc">Dividend tracker and alerts.</span></span></a></li>
+      <li><a href="https://t.me/lotmetrikin_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lotmetrik CIA</span><span class="desc">Market intel feed.</span></span></a></li>
+      <li><a href="https://t.me/Lotmetrikbdm_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">LotmetrikBDM</span><span class="desc">Bandar detector meter.</span></span></a></li>
     </ul>
   </section>
 
   <section class="in in-5">
     <p class="tag">// bot</p>
     <ul class="links">
-      <li><a href="https://t.me/feedflowrss_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">FeedFlow</span><span class="desc">@feedflowrss_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/socmedownload_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">SocmedDownload</span><span class="desc">@socmedownload_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/resipaket_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">ResiPaket</span><span class="desc">@resipaket_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/cek_dom_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">CekDom</span><span class="desc">@cek_dom_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/mailtempo_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">MailTempo</span><span class="desc">@mailtempo_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/unisearch_zpi_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">UniSearch</span><span class="desc">@unisearch_zpi_bot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/CourseKnowledgeAiBot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">CourseBrain</span><span class="desc">@CourseKnowledgeAiBot</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/social_insight_ai_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">SocmedInsight</span><span class="desc">@social_insight_ai_bot</span></span><span class="arr">&#8599;</span></a></li>
+      <li><a href="https://t.me/feedflowrss_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">FeedFlow</span><span class="desc">RSS feeds piped into Telegram.</span></span></a></li>
+      <li><a href="https://t.me/socmedownload_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">SocmedDownload</span><span class="desc">Social media video downloader.</span></span></a></li>
+      <li><a href="https://t.me/resipaket_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">ResiPaket</span><span class="desc">Package tracking across Indonesian couriers.</span></span></a></li>
+      <li><a href="https://t.me/cek_dom_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">CekDom</span><span class="desc">Domain availability checker.</span></span></a></li>
+      <li><a href="https://t.me/mailtempo_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">MailTempo</span><span class="desc">Disposable temporary mail in Telegram.</span></span></a></li>
+      <li><a href="https://t.me/unisearch_zpi_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">UniSearch</span><span class="desc">Universal search bot.</span></span></a></li>
+      <li><a href="https://t.me/CourseKnowledgeAiBot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">CourseBrain</span><span class="desc">Course knowledge Q&amp;A bot.</span></span></a></li>
+      <li><a href="https://t.me/social_insight_ai_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">SocmedInsight</span><span class="desc">Social listening insights on demand.</span></span></a></li>
     </ul>
   </section>
 
   <section class="in in-6">
     <p class="tag">// tool</p>
     <ul class="links">
-      <li><a href="https://qrku.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="main"><span class="name">QRku</span><span class="desc">qrku.alfindigital.com</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://dotmail.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="main"><span class="name">DotMail</span><span class="desc">dotmail.alfindigital.com</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://ds.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">03</span></span><span class="main"><span class="name">DiScraper</span><span class="desc">ds.alfindigital.com</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://aigratis.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">04</span></span><span class="main"><span class="name">AI Gratis</span><span class="desc">aigratis.my.id</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://github.com/alfindigital/tradingview-mcp" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="main"><span class="name">TradingView MCP</span><span class="desc">github.com/alfindigital/tradingview-mcp</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://github.com/alfindigital/threads-lens" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="main"><span class="name">Threads Lens</span><span class="desc">github.com/alfindigital/threads-lens</span></span><span class="arr">&#8599;</span></a></li>
+      <li><a href="https://qrku.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">QRku</span><span class="desc">QR code generator and reader in the browser.</span></span></a></li>
+      <li><a href="https://dotmail.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">DotMail</span><span class="desc">Gmail dot-trick alias generator.</span></span></a></li>
+      <li><a href="https://ds.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">03</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">DiScraper</span><span class="desc">Discord scraper toolkit.</span></span></a></li>
+      <li><a href="https://aigratis.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">04</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">AI Gratis</span><span class="desc">Directory of free AI tools and API tokens.</span></span></a></li>
+      <li><a href="https://github.com/alfindigital/tradingview-mcp" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">TradingView MCP</span><span class="desc">TradingView Desktop automation via MCP.</span></span></a></li>
+      <li><a href="https://github.com/alfindigital/threads-lens" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Threads Lens</span><span class="desc">Viral Threads crawler extension.</span></span></a></li>
     </ul>
   </section>
 
   <section class="in in-7">
     <p class="tag">// client</p>
     <ul class="links">
-      <li><a href="https://swimma.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="main"><span class="name">Swimma</span><span class="desc">swimma.my.id</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://bangamingadget.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="main"><span class="name">Puslab</span><span class="desc">bangamingadget.pages.dev</span></span><span class="arr">&#8599;</span></a></li>
+      <li><a href="https://swimma.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Swimma</span><span class="desc">Swim course booking PWA. Scheduling, ledger, QRIS.</span></span></a></li>
+      <li><a href="https://bangamingadget.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Puslab</span><span class="desc">Laptop repair site rebuilt as Jamstack.</span></span></a></li>
     </ul>
   </section>
 
   <section class="in in-8">
     <p class="tag">// channel</p>
     <ul class="links">
-      <li><a href="https://t.me/IDXnews1" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">IDX News</span><span class="desc">@IDXnews1</span></span><span class="arr">&#8599;</span></a></li>
-      <li><a href="https://t.me/LotmetrikID" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">@LotmetrikID</span></span><span class="arr">&#8599;</span></a></li>
+      <li><a href="https://t.me/IDXnews1" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">IDX News</span><span class="desc">IDX market news channel.</span></span></a></li>
+      <li><a href="https://t.me/LotmetrikID" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">Lotmetrik broadcast channel.</span></span></a></li>
     </ul>
   </section>
   <!-- LINKS:END -->
