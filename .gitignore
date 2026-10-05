@@ -3,5 +3,3 @@ dist/
 fonts.css.tmp
 *.tmp
 .wrangler/
-HANDOFF.md
-AGENTS.md
