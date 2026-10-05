@@ -1,0 +1,11 @@
+name = "alfin-ai-id"
+account_id = "b534acd3a8238a6391b64da112d23eaf"
+compatibility_date = "2025-10-01"
+
+routes = [
+  { pattern = "alfin.ai.id", custom_domain = true },
+  { pattern = "www.alfin.ai.id", custom_domain = true },
+]
+
+[assets]
+directory = "./dist"
