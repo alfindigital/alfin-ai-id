@@ -20,12 +20,14 @@ const FOOTER_SET = new Set([
 const unesc = (s) => s.replace(/&amp;/g, "&").replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
-const slotFor = (url, idx) => {
-  const icon = url.includes("t.me/") ? "i-tg" : url.includes("github.com") ? "i-gh" : null;
-  const inner = icon
-    ? `<svg class="ic"><use href="#${icon}"/></svg>`
-    : `<span class="idx">${String(idx).padStart(2, "0")}</span>`;
-  return `<span class="slot">${inner}</span>`;
+// Slot icon konsisten: Telegram / GitHub / globe untuk link web biasa.
+const slotFor = (url) => {
+  const icon = url.includes("t.me/")
+    ? "i-tg"
+    : url.includes("github.com")
+      ? "i-gh"
+      : "i-web";
+  return `<span class="slot"><svg class="ic"><use href="#${icon}"/></svg></span>`;
 };
 
 const metaFor = (gh) =>
@@ -70,7 +72,7 @@ async function main() {
 
   const nav =
     `  <nav class="jumpnav in in-2" aria-label="Kategori">\n    ` +
-    groups.map((g) => `<a href="#${slugFor(g.name)}">//${esc(g.name)}</a>`).join("\n    ") +
+    groups.map((g) => `<a href="#${slugFor(g.name)}"><span class="sl">//</span>${esc(g.name)}</a>`).join("\n    ") +
     `\n  </nav>\n\n`;
 
   const blocks =
@@ -79,8 +81,8 @@ async function main() {
       .map((g, gi) => {
         const rows = g.links
           .map(
-            (l, i) =>
-              `      <li><a href="${l.url}" target="_blank" rel="noopener">${slotFor(l.url, i + 1)}${metaFor(l.gh)}<span class="main"><span class="name">${esc(l.title)}</span><span class="desc">${esc(l.note || descFor(l.url))}</span></span></a></li>`,
+            (l) =>
+              `      <li><a href="${l.url}" target="_blank" rel="noopener">${slotFor(l.url)}${metaFor(l.gh)}<span class="main"><span class="name">${esc(l.title)}</span><span class="desc">${esc(l.note || descFor(l.url))}</span></span></a></li>`,
           )
           .join("\n");
         return `  <section class="in in-${gi + 3}" id="${slugFor(g.name)}">\n    <p class="tag">// ${esc(g.name)}</p>\n    <ul class="links">\n${rows}\n    </ul>\n  </section>`;

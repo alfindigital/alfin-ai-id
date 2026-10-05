@@ -63,11 +63,22 @@ svg{display:block}
 .ic-fill{fill:currentColor}
 .ic-stroke{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
+/* dot-grid: tekstur techy samar, menjaga halaman tidak polos */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:radial-gradient(color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1px);
+  background-size:26px 26px;
+  pointer-events:none;
+  z-index:0;
+}
+
 /* corner ticks: motif HUD di 4 sudut viewport */
 .ticks i{
   position:fixed;
   width:14px;height:14px;
-  border:1px solid var(--tick);
+  border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);
   pointer-events:none;
   z-index:10;
 }
@@ -77,6 +88,8 @@ svg{display:block}
 .ticks i:nth-child(4){bottom:calc(12px + env(safe-area-inset-bottom));right:calc(12px + env(safe-area-inset-right));border-left:0;border-top:0}
 
 main{
+  position:relative;
+  z-index:1;
   width:100%;
   max-width:64rem;
   padding:clamp(1.25rem,4vw,2.25rem) clamp(1.1rem,4vw,2.5rem) 2.5rem;
@@ -157,6 +170,7 @@ html{scroll-behavior:smooth}
   white-space:nowrap;
   transition:color .18s ease;
 }
+.jumpnav a .sl{color:var(--accent)}
 .jumpnav a:hover{color:var(--accent)}
 @media(max-width:33.9rem){
   .jumpnav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
@@ -166,7 +180,7 @@ html{scroll-behavior:smooth}
   font-family:"IBM Plex Mono",ui-monospace,monospace;
   font-weight:700;
   font-size:.82rem;
-  color:var(--ink);
+  color:var(--accent);
   letter-spacing:.08em;
   margin-bottom:.65rem;
 }
@@ -175,6 +189,7 @@ section{margin-bottom:1.9rem;scroll-margin-top:3.6rem}
   list-style:none;
   display:grid;
   grid-template-columns:repeat(2,1fr);
+  grid-auto-rows:1fr;
   gap:.55rem;
 }
 @media(min-width:34rem){.links{grid-template-columns:repeat(3,1fr)}}
@@ -191,9 +206,13 @@ section{margin-bottom:1.9rem;scroll-margin-top:3.6rem}
   text-decoration:none;
   color:var(--ink);
   min-height:44px;
-  transition:border-color .18s ease,transform .18s ease;
+  transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease;
 }
-.links a:hover{border-color:var(--accent);transform:translateY(-2px)}
+.links a:hover{
+  border-color:var(--accent);
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px -14px color-mix(in srgb,var(--accent) 60%,transparent);
+}
 .links a:active{transform:translateY(-2px) scale(.99)}
 .slot{
   grid-area:slot;
@@ -209,12 +228,6 @@ section{margin-bottom:1.9rem;scroll-margin-top:3.6rem}
   gap:.45rem;
 }
 .meta .oss{width:.95rem;height:.95rem}
-.idx{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.68rem;
-  color:var(--ink-2);
-}
-.links a:hover .idx{color:var(--accent)}
 .links a:hover .ic{color:var(--accent)}
 .links .main{grid-area:main;min-width:0}
 .links .name{
@@ -240,31 +253,19 @@ section{margin-bottom:1.9rem;scroll-margin-top:3.6rem}
 .links .arr{
   font-family:"IBM Plex Mono",ui-monospace,monospace;
   font-size:.85rem;
-  color:var(--ink-2);
-  transition:color .18s ease,transform .18s ease;
+  color:var(--accent);
+  transition:transform .18s ease;
 }
-.links a:hover .arr{color:var(--accent);transform:translate(2px,-2px)}
+.links a:hover .arr{transform:translate(2px,-2px)}
 
 footer{
   margin-top:auto;
   border-top:1px solid var(--line);
   padding-top:1.1rem;
   display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:1rem;
+  justify-content:center;
 }
-.socials{display:flex;flex-wrap:wrap;justify-content:flex-end}
 footer .icon-btn .ic{width:1.25rem;height:1.25rem}
-.qr{
-  width:54px;
-  height:54px;
-  padding:5px;
-  background:#fff;
-  border-radius:8px;
-  flex-shrink:0;
-}
-.qr img{width:100%;height:100%;display:block}
 
 @media (prefers-reduced-motion:no-preference){
   .in{animation:in .5s cubic-bezier(.22,1,.36,1) both}
@@ -286,6 +287,7 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
 <symbol id="i-ig" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".9" fill="currentColor" stroke="none"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+<symbol id="i-web" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></symbol>
 </defs></svg>
 <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <main>
@@ -302,35 +304,35 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
 
   <!-- LINKS:START -->
   <nav class="jumpnav in in-2" aria-label="Kategori">
-    <a href="#app">//app</a>
-    <a href="#idx">//idx</a>
-    <a href="#idx-bot">//idx bot</a>
-    <a href="#bot">//bot</a>
-    <a href="#tool">//tool</a>
-    <a href="#client">//client</a>
-    <a href="#channel">//channel</a>
+    <a href="#app"><span class="sl">//</span>app</a>
+    <a href="#idx"><span class="sl">//</span>idx</a>
+    <a href="#idx-bot"><span class="sl">//</span>idx bot</a>
+    <a href="#bot"><span class="sl">//</span>bot</a>
+    <a href="#tool"><span class="sl">//</span>tool</a>
+    <a href="#client"><span class="sl">//</span>client</a>
+    <a href="#channel"><span class="sl">//</span>channel</a>
   </nav>
 
   <section class="in in-3" id="app">
     <p class="tag">// app</p>
     <ul class="links">
-      <li><a href="https://terusin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Terusin</span><span class="desc">Offline habit tracker. Streaks, notes, zero accounts.</span></span></a></li>
-      <li><a href="https://fokusin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Fokusin</span><span class="desc">Offline pomodoro timer. No account, no ads.</span></span></a></li>
-      <li><a href="https://beresin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">03</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Beresin</span><span class="desc">Home and business service booking. PWA.</span></span></a></li>
-      <li><a href="https://lamarbot.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">04</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">LamarBot</span><span class="desc">Job application copilot for JobStreet and Glints.</span></span></a></li>
-      <li><a href="https://barberai.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">05</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">BarberAI</span><span class="desc">Barbershop booking PWA with WhatsApp checkout.</span></span></a></li>
-      <li><a href="https://ukhtigo.vercel.app" target="_blank" rel="noopener"><span class="slot"><span class="idx">06</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">UkhtiGo</span><span class="desc">Ride and delivery platform built for muslimah.</span></span></a></li>
-      <li><a href="https://lezat.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">07</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lezat</span><span class="desc">Local food ordering for Barlingmascakeb.</span></span></a></li>
+      <li><a href="https://terusin.pages.dev" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Terusin</span><span class="desc">Offline habit tracker. Streaks, notes, zero accounts.</span></span></a></li>
+      <li><a href="https://fokusin.pages.dev" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Fokusin</span><span class="desc">Offline pomodoro timer. No account, no ads.</span></span></a></li>
+      <li><a href="https://beresin.pages.dev" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Beresin</span><span class="desc">Home and business service booking. PWA.</span></span></a></li>
+      <li><a href="https://lamarbot.pages.dev" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">LamarBot</span><span class="desc">Job application copilot for JobStreet and Glints.</span></span></a></li>
+      <li><a href="https://barberai.pages.dev" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">BarberAI</span><span class="desc">Barbershop booking PWA with WhatsApp checkout.</span></span></a></li>
+      <li><a href="https://ukhtigo.vercel.app" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">UkhtiGo</span><span class="desc">Ride and delivery platform built for muslimah.</span></span></a></li>
+      <li><a href="https://lezat.my.id" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lezat</span><span class="desc">Local food ordering for Barlingmascakeb.</span></span></a></li>
     </ul>
   </section>
 
   <section class="in in-4" id="idx">
     <p class="tag">// idx</p>
     <ul class="links">
-      <li><a href="https://lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">Quantitative IDX stock education platform.</span></span></a></li>
-      <li><a href="https://des.lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">DES</span><span class="desc">IDX sharia securities dashboard, 2016-2026.</span></span></a></li>
-      <li><a href="https://5.lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">03</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">5% Ownership</span><span class="desc">Tracks IDX shareholders above the 5% line.</span></span></a></li>
-      <li><a href="https://radar-x-beta.vercel.app" target="_blank" rel="noopener"><span class="slot"><span class="idx">04</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Radar-X</span><span class="desc">Smart-money positioning map for IDX movers.</span></span></a></li>
+      <li><a href="https://lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">Quantitative IDX stock education platform.</span></span></a></li>
+      <li><a href="https://des.lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">DES</span><span class="desc">IDX sharia securities dashboard, 2016-2026.</span></span></a></li>
+      <li><a href="https://5.lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">5% Ownership</span><span class="desc">Tracks IDX shareholders above the 5% line.</span></span></a></li>
+      <li><a href="https://radar-x-beta.vercel.app" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Radar-X</span><span class="desc">Smart-money positioning map for IDX movers.</span></span></a></li>
       <li><a href="https://github.com/alfindigital/idx-avg" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">IDX Avg</span><span class="desc">IDX averaging calculator.</span></span></a></li>
       <li><a href="https://github.com/alfindigital/scalc" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Scalc</span><span class="desc">Stock calculator. Sizing and fees.</span></span></a></li>
       <li><a href="https://github.com/alfindigital/ddcal" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">DDCal</span><span class="desc">Drawdown calculator.</span></span></a></li>
@@ -372,10 +374,10 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
   <section class="in in-7" id="tool">
     <p class="tag">// tool</p>
     <ul class="links">
-      <li><a href="https://qrku.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">QRku</span><span class="desc">QR code generator and reader in the browser.</span></span></a></li>
-      <li><a href="https://dotmail.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">DotMail</span><span class="desc">Gmail dot-trick alias generator.</span></span></a></li>
-      <li><a href="https://ds.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">03</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">DiScraper</span><span class="desc">Discord scraper toolkit.</span></span></a></li>
-      <li><a href="https://aigratis.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">04</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">AI Gratis</span><span class="desc">Directory of free AI tools and API tokens.</span></span></a></li>
+      <li><a href="https://qrku.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">QRku</span><span class="desc">QR code generator and reader in the browser.</span></span></a></li>
+      <li><a href="https://dotmail.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">DotMail</span><span class="desc">Gmail dot-trick alias generator.</span></span></a></li>
+      <li><a href="https://ds.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">DiScraper</span><span class="desc">Discord scraper toolkit.</span></span></a></li>
+      <li><a href="https://aigratis.my.id" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">AI Gratis</span><span class="desc">Directory of free AI tools and API tokens.</span></span></a></li>
       <li><a href="https://github.com/alfindigital/tradingview-mcp" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">TradingView MCP</span><span class="desc">TradingView Desktop automation via MCP.</span></span></a></li>
       <li><a href="https://github.com/alfindigital/threads-lens" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-gh"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Threads Lens</span><span class="desc">Viral Threads crawler extension.</span></span></a></li>
     </ul>
@@ -384,8 +386,8 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
   <section class="in in-8" id="client">
     <p class="tag">// client</p>
     <ul class="links">
-      <li><a href="https://swimma.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Swimma</span><span class="desc">Swim course booking PWA. Scheduling, ledger, QRIS.</span></span></a></li>
-      <li><a href="https://bangamingadget.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">02</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Puslab</span><span class="desc">Laptop repair site rebuilt as Jamstack.</span></span></a></li>
+      <li><a href="https://swimma.my.id" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Swimma</span><span class="desc">Swim course booking PWA. Scheduling, ledger, QRIS.</span></span></a></li>
+      <li><a href="https://bangamingadget.pages.dev" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Puslab</span><span class="desc">Laptop repair site rebuilt as Jamstack.</span></span></a></li>
     </ul>
   </section>
 
@@ -399,15 +401,12 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
   <!-- LINKS:END -->
 
   <footer class="in in-10">
-    <div class="qr" role="img" aria-label="QR code menuju alfin.ai.id"><img src="/qr.svg" alt="" width="44" height="44"></div>
-    <div class="socials">
-      <a class="icon-btn" href="https://github.com/alfindigital" target="_blank" rel="noopener" aria-label="GitHub"><svg class="ic"><use href="#i-gh"/></svg></a>
-      <a class="icon-btn" href="https://www.linkedin.com/in/alfindigital" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="ic"><use href="#i-in"/></svg></a>
-      <a class="icon-btn" href="https://instagram.com/alfindigitalcom" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ic"><use href="#i-ig"/></svg></a>
-      <a class="icon-btn" href="https://twitter.com/alfindigital" target="_blank" rel="noopener" aria-label="X"><svg class="ic"><use href="#i-x"/></svg></a>
-      <a class="icon-btn" href="https://t.me/toolsbisnis" target="_blank" rel="noopener" aria-label="Telegram"><svg class="ic"><use href="#i-tg"/></svg></a>
-      <a class="icon-btn" href="https://wa.me/6289619093961" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ic"><use href="#i-wa"/></svg></a>
-    </div>
+    <a class="icon-btn" href="https://github.com/alfindigital" target="_blank" rel="noopener" aria-label="GitHub"><svg class="ic"><use href="#i-gh"/></svg></a>
+    <a class="icon-btn" href="https://www.linkedin.com/in/alfindigital" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="ic"><use href="#i-in"/></svg></a>
+    <a class="icon-btn" href="https://instagram.com/alfindigitalcom" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ic"><use href="#i-ig"/></svg></a>
+    <a class="icon-btn" href="https://twitter.com/alfindigital" target="_blank" rel="noopener" aria-label="X"><svg class="ic"><use href="#i-x"/></svg></a>
+    <a class="icon-btn" href="https://t.me/toolsbisnis" target="_blank" rel="noopener" aria-label="Telegram"><svg class="ic"><use href="#i-tg"/></svg></a>
+    <a class="icon-btn" href="https://wa.me/6289619093961" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ic"><use href="#i-wa"/></svg></a>
   </footer>
 </main>
 </body>
