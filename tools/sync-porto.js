@@ -79,13 +79,18 @@ async function main() {
     .join("\n\n");
 
   const src = fs.readFileSync(INDEX, "utf8");
+  if (!/<!-- LINKS:START -->[\s\S]*?<!-- LINKS:END -->/.test(src))
+    throw new Error("marker LINKS tidak ketemu di index.html");
   const out = src.replace(
     /<!-- LINKS:START -->[\s\S]*?<!-- LINKS:END -->/,
     `<!-- LINKS:START -->\n${blocks}\n  <!-- LINKS:END -->`,
   );
-  if (out === src) throw new Error("marker LINKS tidak ketemu di index.html");
-  fs.writeFileSync(INDEX, out);
   const total = groups.reduce((n, g) => n + g.links.length, 0);
+  if (out === src) {
+    console.log(`sudah sinkron: ${groups.length} section, ${total} link`);
+    return;
+  }
+  fs.writeFileSync(INDEX, out);
   console.log(`synced: ${groups.length} section, ${total} link, ${oss} open-source`);
   groups.forEach((g) => console.log(`  // ${g.name}: ${g.links.length}`));
 }

@@ -7,6 +7,7 @@ const dist = path.join(root, "dist");
 
 const PUBLIC_FILES = [
   "index.html",
+  "404.html",
   "favicon.svg",
   "_headers",
   "theme.js",

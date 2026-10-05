@@ -4,7 +4,8 @@
   "scripts": {
     "build": "node tools/build-dist.js",
     "sync": "node tools/sync-porto.js && node tools/build-dist.js",
-    "deploy": "node tools/build-dist.js && wrangler deploy"
+    "deploy": "node tools/build-dist.js && wrangler deploy",
+    "verify": "node tools/verify.js"
   },
   "devDependencies": {
     "wrangler": "^4.147.0"

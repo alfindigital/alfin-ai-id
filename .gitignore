@@ -3,3 +3,7 @@ dist/
 fonts.css.tmp
 *.tmp
 .wrangler/
+sync.log
+live.html
+links.txt
+porto.html
