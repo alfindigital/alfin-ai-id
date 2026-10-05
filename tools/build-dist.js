@@ -13,6 +13,7 @@ const PUBLIC_FILES = [
   "theme.js",
   "og.png",
   "apple-touch-icon.png",
+  "qr.svg",
 ];
 
 // fonts/: hanya woff2 yang dideploy (ttf dipakai build-time utk render og.png)

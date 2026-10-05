@@ -31,6 +31,8 @@ const slotFor = (url, idx) => {
 const metaFor = (gh) =>
   `<span class="meta">${gh ? '<svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg>' : ""}<span class="arr">&#8599;</span></span>`;
 
+const slugFor = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
 const descFor = (url) => {
   const u = new URL(url);
   if (u.hostname === "t.me") return "@" + u.pathname.slice(1);
@@ -66,17 +68,24 @@ async function main() {
   }
   if (!groups.length) throw new Error("nol kategori ter-parse — cek markup porto");
 
-  const blocks = groups
-    .map((g, gi) => {
-      const rows = g.links
-        .map(
-          (l, i) =>
-            `      <li><a href="${l.url}" target="_blank" rel="noopener">${slotFor(l.url, i + 1)}${metaFor(l.gh)}<span class="main"><span class="name">${esc(l.title)}</span><span class="desc">${esc(l.note || descFor(l.url))}</span></span></a></li>`,
-        )
-        .join("\n");
-      return `  <section class="in in-${gi + 2}">\n    <p class="tag">// ${esc(g.name)}</p>\n    <ul class="links">\n${rows}\n    </ul>\n  </section>`;
-    })
-    .join("\n\n");
+  const nav =
+    `  <nav class="jumpnav in in-2" aria-label="Kategori">\n    ` +
+    groups.map((g) => `<a href="#${slugFor(g.name)}">//${esc(g.name)}</a>`).join("\n    ") +
+    `\n  </nav>\n\n`;
+
+  const blocks =
+    nav +
+    groups
+      .map((g, gi) => {
+        const rows = g.links
+          .map(
+            (l, i) =>
+              `      <li><a href="${l.url}" target="_blank" rel="noopener">${slotFor(l.url, i + 1)}${metaFor(l.gh)}<span class="main"><span class="name">${esc(l.title)}</span><span class="desc">${esc(l.note || descFor(l.url))}</span></span></a></li>`,
+          )
+          .join("\n");
+        return `  <section class="in in-${gi + 3}" id="${slugFor(g.name)}">\n    <p class="tag">// ${esc(g.name)}</p>\n    <ul class="links">\n${rows}\n    </ul>\n  </section>`;
+      })
+      .join("\n\n");
 
   const src = fs.readFileSync(INDEX, "utf8");
   if (!/<!-- LINKS:START -->[\s\S]*?<!-- LINKS:END -->/.test(src))

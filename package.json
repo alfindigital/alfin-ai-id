@@ -5,9 +5,13 @@
     "build": "node tools/build-dist.js",
     "sync": "node tools/sync-porto.js && node tools/build-dist.js",
     "deploy": "node tools/build-dist.js && wrangler deploy",
-    "verify": "node tools/verify.js"
+    "verify": "node tools/verify.js",
+    "qr": "node tools/make-qr.js",
+    "test:visual": "node tools/visual-check.js"
   },
   "devDependencies": {
+    "playwright-core": "^1.63.0",
+    "qrcode": "^1.5.4",
     "wrangler": "^4.147.0"
   }
 }

@@ -130,6 +130,38 @@ header .tools{display:flex;align-items:center}
 [data-theme="dark"] .i-moon{display:none}
 [data-theme="light"] .i-sun{display:none}
 
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.jumpnav{
+  position:sticky;
+  top:0;
+  z-index:5;
+  display:flex;
+  flex-wrap:wrap;
+  gap:.1rem .9rem;
+  padding:.4rem 0;
+  margin-bottom:1.5rem;
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+  transition:background-color .25s ease;
+}
+.jumpnav a{
+  display:flex;
+  align-items:center;
+  min-height:44px;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.72rem;
+  letter-spacing:.06em;
+  color:var(--ink-2);
+  text-decoration:none;
+  white-space:nowrap;
+  transition:color .18s ease;
+}
+.jumpnav a:hover{color:var(--accent)}
+@media(max-width:33.9rem){
+  .jumpnav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .jumpnav::-webkit-scrollbar{display:none}
+}
 .tag{
   font-family:"IBM Plex Mono",ui-monospace,monospace;
   font-weight:700;
@@ -138,7 +170,7 @@ header .tools{display:flex;align-items:center}
   letter-spacing:.08em;
   margin-bottom:.65rem;
 }
-section{margin-bottom:1.9rem}
+section{margin-bottom:1.9rem;scroll-margin-top:3.6rem}
 .links{
   list-style:none;
   display:grid;
@@ -218,15 +250,28 @@ footer{
   border-top:1px solid var(--line);
   padding-top:1.1rem;
   display:flex;
-  justify-content:center;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
 }
+.socials{display:flex;flex-wrap:wrap;justify-content:flex-end}
 footer .icon-btn .ic{width:1.25rem;height:1.25rem}
+.qr{
+  width:54px;
+  height:54px;
+  padding:5px;
+  background:#fff;
+  border-radius:8px;
+  flex-shrink:0;
+}
+.qr img{width:100%;height:100%;display:block}
 
 @media (prefers-reduced-motion:no-preference){
   .in{animation:in .5s cubic-bezier(.22,1,.36,1) both}
   .in-1{animation-delay:.05s}.in-2{animation-delay:.1s}.in-3{animation-delay:.15s}
   .in-4{animation-delay:.2s}.in-5{animation-delay:.25s}.in-6{animation-delay:.3s}
   .in-7{animation-delay:.35s}.in-8{animation-delay:.4s}.in-9{animation-delay:.45s}
+  .in-10{animation-delay:.5s}
   @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 }
 </style>
@@ -256,7 +301,17 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
   </header>
 
   <!-- LINKS:START -->
-  <section class="in in-2">
+  <nav class="jumpnav in in-2" aria-label="Kategori">
+    <a href="#app">//app</a>
+    <a href="#idx">//idx</a>
+    <a href="#idx-bot">//idx bot</a>
+    <a href="#bot">//bot</a>
+    <a href="#tool">//tool</a>
+    <a href="#client">//client</a>
+    <a href="#channel">//channel</a>
+  </nav>
+
+  <section class="in in-3" id="app">
     <p class="tag">// app</p>
     <ul class="links">
       <li><a href="https://terusin.pages.dev" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Terusin</span><span class="desc">Offline habit tracker. Streaks, notes, zero accounts.</span></span></a></li>
@@ -269,7 +324,7 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
     </ul>
   </section>
 
-  <section class="in in-3">
+  <section class="in in-4" id="idx">
     <p class="tag">// idx</p>
     <ul class="links">
       <li><a href="https://lotmetrik.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">Quantitative IDX stock education platform.</span></span></a></li>
@@ -285,7 +340,7 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
     </ul>
   </section>
 
-  <section class="in in-4">
+  <section class="in in-5" id="idx-bot">
     <p class="tag">// idx bot</p>
     <ul class="links">
       <li><a href="https://t.me/lotmetrik_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Lotmetrik</span><span class="desc">17-scraper IDX market intelligence bot.</span></span></a></li>
@@ -300,7 +355,7 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
     </ul>
   </section>
 
-  <section class="in in-5">
+  <section class="in in-6" id="bot">
     <p class="tag">// bot</p>
     <ul class="links">
       <li><a href="https://t.me/feedflowrss_bot" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">FeedFlow</span><span class="desc">RSS feeds piped into Telegram.</span></span></a></li>
@@ -314,7 +369,7 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
     </ul>
   </section>
 
-  <section class="in in-6">
+  <section class="in in-7" id="tool">
     <p class="tag">// tool</p>
     <ul class="links">
       <li><a href="https://qrku.alfindigital.com" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg><span class="arr">&#8599;</span></span><span class="main"><span class="name">QRku</span><span class="desc">QR code generator and reader in the browser.</span></span></a></li>
@@ -326,7 +381,7 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
     </ul>
   </section>
 
-  <section class="in in-7">
+  <section class="in in-8" id="client">
     <p class="tag">// client</p>
     <ul class="links">
       <li><a href="https://swimma.my.id" target="_blank" rel="noopener"><span class="slot"><span class="idx">01</span></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">Swimma</span><span class="desc">Swim course booking PWA. Scheduling, ledger, QRIS.</span></span></a></li>
@@ -334,7 +389,7 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
     </ul>
   </section>
 
-  <section class="in in-8">
+  <section class="in in-9" id="channel">
     <p class="tag">// channel</p>
     <ul class="links">
       <li><a href="https://t.me/IDXnews1" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-tg"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">IDX News</span><span class="desc">IDX market news channel.</span></span></a></li>
@@ -343,13 +398,16 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
   </section>
   <!-- LINKS:END -->
 
-  <footer class="in in-9">
-    <a class="icon-btn" href="https://github.com/alfindigital" target="_blank" rel="noopener" aria-label="GitHub"><svg class="ic"><use href="#i-gh"/></svg></a>
-    <a class="icon-btn" href="https://www.linkedin.com/in/alfindigital" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="ic"><use href="#i-in"/></svg></a>
-    <a class="icon-btn" href="https://instagram.com/alfindigitalcom" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ic"><use href="#i-ig"/></svg></a>
-    <a class="icon-btn" href="https://twitter.com/alfindigital" target="_blank" rel="noopener" aria-label="X"><svg class="ic"><use href="#i-x"/></svg></a>
-    <a class="icon-btn" href="https://t.me/toolsbisnis" target="_blank" rel="noopener" aria-label="Telegram"><svg class="ic"><use href="#i-tg"/></svg></a>
-    <a class="icon-btn" href="https://wa.me/6289619093961" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ic"><use href="#i-wa"/></svg></a>
+  <footer class="in in-10">
+    <div class="qr" role="img" aria-label="QR code menuju alfin.ai.id"><img src="/qr.svg" alt="" width="44" height="44"></div>
+    <div class="socials">
+      <a class="icon-btn" href="https://github.com/alfindigital" target="_blank" rel="noopener" aria-label="GitHub"><svg class="ic"><use href="#i-gh"/></svg></a>
+      <a class="icon-btn" href="https://www.linkedin.com/in/alfindigital" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="ic"><use href="#i-in"/></svg></a>
+      <a class="icon-btn" href="https://instagram.com/alfindigitalcom" target="_blank" rel="noopener" aria-label="Instagram"><svg class="ic"><use href="#i-ig"/></svg></a>
+      <a class="icon-btn" href="https://twitter.com/alfindigital" target="_blank" rel="noopener" aria-label="X"><svg class="ic"><use href="#i-x"/></svg></a>
+      <a class="icon-btn" href="https://t.me/toolsbisnis" target="_blank" rel="noopener" aria-label="Telegram"><svg class="ic"><use href="#i-tg"/></svg></a>
+      <a class="icon-btn" href="https://wa.me/6289619093961" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ic"><use href="#i-wa"/></svg></a>
+    </div>
   </footer>
 </main>
 </body>
