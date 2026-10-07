@@ -5,8 +5,12 @@ const BASE = process.env.BASE || "https://alfin.ai.id";
 const ASSETS = [
   "/",
   "/gear",
+  "/member",
+  "/admin",
   "/theme.js",
-  "/pay.js",
+  "/store.js",
+  "/member.js",
+  "/admin.js",
   "/favicon.svg",
   "/og.png",
   "/apple-touch-icon.png",
@@ -44,12 +48,22 @@ async function main() {
   else { console.log("FAIL badge OSS hilang"); fail++; }
   if (!html.includes("fonts.googleapis.com")) console.log("ok  Google Fonts nol");
   else { console.log("FAIL Google Fonts masih direferensikan"); fail++; }
-  if (html.includes('data-buy="swipepages"') && html.includes("// berbayar")) console.log("ok  produk berbayar ada");
+  if (html.includes('data-products="paid"') && html.includes("// berbayar")) console.log("ok  section berbayar ada");
   else { console.log("FAIL section berbayar hilang"); fail++; }
 
-  const gear = await fetch(BASE + "/gear").then((r) => r.text());
-  if (gear.includes("woxo.tech") && gear.includes("jogg.ai")) console.log("ok  /gear woxo+jogg ada");
-  else { console.log("FAIL /gear konten hilang"); fail++; }
+  const paid = await fetch(BASE + "/api/products?kind=paid").then((r) => r.json()).catch(() => ({}));
+  const slugs = (paid.products || []).map((p) => p.slug);
+  if (slugs.includes("boei-help") && slugs.includes("anychat") && slugs.includes("swipepages")) console.log("ok  api products: 3 produk");
+  else { console.log("FAIL api products paid"); fail++; }
+
+  const gearApi = await fetch(BASE + "/api/products?kind=gear").then((r) => r.json()).catch(() => ({}));
+  const gurls = (gearApi.products || []).map((p) => p.url);
+  if (gurls.includes("https://woxo.tech") && gurls.includes("https://jogg.ai")) console.log("ok  api gear: woxo+jogg");
+  else { console.log("FAIL api products gear"); fail++; }
+
+  const adm = await fetch(BASE + "/api/admin/products").then((r) => r.status);
+  console.log(`${adm === 401 ? "ok " : "FAIL"} admin gate -> ${adm}`);
+  if (adm !== 401) fail++;
 
   const r404 = await fetch(BASE + "/path-ngasal-" + Date.now());
   console.log(`${r404.status === 404 ? "ok " : "FAIL"} /random -> ${r404.status}`);

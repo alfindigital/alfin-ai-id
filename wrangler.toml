@@ -15,3 +15,8 @@ routes = [
 directory = "./dist"
 binding = "ASSETS"
 not_found_handling = "404-page"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "alfin-store"
+database_id = "9bf38569-44c2-4387-9b84-4abb97fce7dd"

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>//admin · alfin.ai.id</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0d0f">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f3f1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="/theme.js"></script>
+<style>
+@font-face{font-family:"Orbitron";font-style:normal;font-weight:400 900;font-display:swap;src:url("/fonts/orbitron.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url("/fonts/ibmplexmono-400.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:700;font-display:swap;src:url("/fonts/ibmplexmono-700.woff2") format("woff2")}
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:400 700;font-display:swap;src:url("/fonts/instrumentsans.woff2") format("woff2")}
+:root,[data-theme="dark"]{--bg:#0c0d0f;--panel:#121417;--ink:#e8eaec;--ink-2:#9298a0;--line:#22262a;--accent:#d97757;color-scheme:dark}
+[data-theme="light"]{--bg:#f4f3f1;--panel:#ffffff;--ink:#1a1c1e;--ink-2:#6b7078;--line:#e2e1dd;--accent:#b5502f;color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,-apple-system,sans-serif;min-height:100dvh;display:flex;justify-content:center;transition:background-color .25s ease,color .25s ease}
+::selection{background:var(--accent);color:var(--bg)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+svg{display:block}
+.ic{width:1.15rem;height:1.15rem;color:var(--ink-2);flex-shrink:0}
+body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1px);background-size:26px 26px;pointer-events:none;z-index:0}
+.ticks i{position:fixed;width:14px;height:14px;border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);pointer-events:none;z-index:10}
+.ticks i:nth-child(1){top:calc(12px + env(safe-area-inset-top));left:calc(12px + env(safe-area-inset-left));border-right:0;border-bottom:0}
+.ticks i:nth-child(2){top:calc(12px + env(safe-area-inset-top));right:calc(12px + env(safe-area-inset-right));border-left:0;border-bottom:0}
+.ticks i:nth-child(3){bottom:calc(12px + env(safe-area-inset-bottom));left:calc(12px + env(safe-area-inset-left));border-right:0;border-top:0}
+.ticks i:nth-child(4){bottom:calc(12px + env(safe-area-inset-bottom));right:calc(12px + env(safe-area-inset-right));border-left:0;border-top:0}
+main{position:relative;z-index:1;width:100%;max-width:64rem;padding:clamp(1.25rem,4vw,2.25rem) clamp(1.1rem,4vw,2.5rem) 2.5rem;display:flex;flex-direction:column;min-height:100dvh}
+header{display:flex;justify-content:space-between;align-items:center;padding-bottom:1.4rem}
+.brand{font-family:"Orbitron",sans-serif;font-weight:800;font-size:.85rem;color:var(--ink);text-decoration:none;letter-spacing:.1em}
+.icon-btn{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0;background:none;border:0;color:var(--ink-2);text-decoration:none;cursor:pointer}
+.icon-btn:hover{color:var(--accent)}
+.icon-btn .ic{width:1.2rem;height:1.2rem}
+.icon-btn[hidden]{display:none}
+[data-theme="dark"] .i-moon{display:none}
+[data-theme="light"] .i-sun{display:none}
+.tag{font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.82rem;color:var(--accent);letter-spacing:.08em;margin-bottom:.65rem}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1rem;margin-bottom:1.2rem}
+label{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;color:var(--ink-2);margin:.55rem 0 .25rem}
+input,select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.76rem;padding:.45rem .6rem}
+input:focus-visible,select:focus-visible{outline:none;border-color:var(--accent)}
+.btn{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;font-weight:700;letter-spacing:.05em;color:var(--accent);background:transparent;border:1px solid var(--line);border-radius:8px;padding:.45rem .9rem;cursor:pointer;transition:border-color .18s}
+.btn:hover{border-color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:progress}
+.btn.danger{color:#e05d5d}
+.msg{margin-top:.5rem;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;min-height:1em}
+.msg.err{color:#e05d5d}
+.msg.ok{color:#4ade80}
+table{width:100%;border-collapse:collapse;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem}
+th{text-align:left;color:var(--accent);padding:.35rem .45rem;border-bottom:1px solid var(--line);letter-spacing:.04em}
+td{padding:.4rem .45rem;border-bottom:1px solid var(--line);color:var(--ink-2);vertical-align:top}
+td b{color:var(--ink)}
+td input,td select{font-size:.66rem;padding:.25rem .4rem}
+.pill{display:inline-block;padding:.08rem .4rem;border-radius:6px;font-size:.6rem}
+.pill.paid{color:#4ade80;border:1px solid #4ade8055}
+.pill.pending{color:#fbbf24;border:1px solid #fbbf2455}
+.pill.expired,.pill.cancelled{color:#9298a0;border:1px solid #9298a055}
+.muted{color:var(--ink-2);font-size:.68rem;font-family:"IBM Plex Mono",ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr;gap:.7rem}
+@media(min-width:40rem){.grid2{grid-template-columns:repeat(3,1fr)}}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.act{display:flex;gap:.35rem}
+footer{margin-top:auto;border-top:1px solid var(--line);padding-top:1rem;text-align:center}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+</defs></svg>
+<div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<main>
+  <header>
+    <a class="brand" href="/">ALFIN.AI.ID // admin</a>
+    <button class="icon-btn" id="themeBtn" type="button" aria-label="Ganti tema" hidden>
+      <svg class="ic i-sun"><use href="#i-sun"/></svg>
+      <svg class="ic i-moon"><use href="#i-moon"/></svg>
+    </button>
+  </header>
+
+  <div class="card" id="gate" hidden>
+    <h2 class="tag">// admin login</h2>
+    <form id="form-admin">
+      <label for="a-pass">password</label>
+      <input id="a-pass" type="password" required autocomplete="current-password">
+      <button class="btn" type="submit" style="margin-top:.6rem">masuk →</button>
+      <p class="msg" id="a-msg" role="status"></p>
+    </form>
+  </div>
+
+  <div id="panel" hidden>
+    <div class="row-between" style="margin-bottom:1rem">
+      <h2 class="tag" style="margin:0">// admin panel</h2>
+      <button class="btn" id="btn-alo" type="button">keluar →</button>
+    </div>
+
+    <div class="card">
+      <h2 class="tag">produk <span class="muted">(paid + gear — sinkron ke / &amp; /gear)</span></h2>
+      <table id="tbl-prod"><thead><tr>
+        <th>slug</th><th>kind</th><th>nama / desc</th><th>harga</th><th>billing</th><th>access</th><th>url</th><th>sort</th><th>on</th><th></th>
+      </tr></thead><tbody></tbody></table>
+      <details style="margin-top:.8rem">
+        <summary class="muted" style="cursor:pointer">+ produk / gear baru</summary>
+        <div class="grid2" style="margin-top:.7rem">
+          <div><label>slug</label><input id="np-slug" placeholder="nama-slug"></div>
+          <div><label>kind</label><select id="np-kind"><option>paid</option><option>gear</option></select></div>
+          <div><label>nama</label><input id="np-name"></div>
+          <div style="grid-column:1/-1"><label>desc</label><input id="np-desc"></div>
+          <div><label>harga (rp)</label><input id="np-price" type="number" min="0"></div>
+          <div><label>billing</label><select id="np-billing"><option value=""></option><option>yearly</option><option>lifetime</option></select></div>
+          <div><label>access</label><select id="np-access"><option>public</option><option>member</option></select></div>
+          <div style="grid-column:1/-1"><label>url (utk gear)</label><input id="np-url" placeholder="https://…"></div>
+        </div>
+        <button class="btn" id="np-add" type="button" style="margin-top:.6rem">tambah →</button>
+        <p class="msg" id="np-msg"></p>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2 class="tag">orders</h2>
+      <table id="tbl-ord"><thead><tr><th>ref</th><th>produk</th><th>email</th><th>nominal</th><th>status</th><th>dibuat</th><th>paid</th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="card">
+      <h2 class="tag">entitlements</h2>
+      <table id="tbl-ent"><thead><tr><th>email</th><th>produk</th><th>s/d</th><th>source</th><th>ref</th></tr></thead><tbody></tbody></table>
+      <form id="form-grant" class="grid2" style="margin-top:.8rem">
+        <div><label>email user</label><input id="g-email" required></div>
+        <div><label>produk</label><select id="g-slug"></select></div>
+        <div><label>s/d (kosong = lifetime)</label><input id="g-ends" type="date"></div>
+        <div style="grid-column:1/-1"><button class="btn" type="submit">grant manual →</button><span class="msg" id="g-msg" style="display:inline-block;margin-left:.6rem"></span></div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 class="tag">users</h2>
+      <table id="tbl-usr"><thead><tr><th>email</th><th>terdaftar</th><th>grants</th><th>orders</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+  <footer class="muted">alfin.ai.id admin — autopay synced</footer>
+</main>
+<script src="/admin.js" defer></script>
+</body>
+</html>

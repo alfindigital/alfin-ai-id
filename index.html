@@ -26,7 +26,7 @@
 <link rel="preload" href="/fonts/instrumentsans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/orbitron.woff2" as="font" type="font/woff2" crossorigin>
 <script src="/theme.js"></script>
-<script src="/pay.js" defer></script>
+<script src="/store.js" defer></script>
 <style>
 @font-face{font-family:"Orbitron";font-style:normal;font-weight:400 900;font-display:swap;src:url("/fonts/orbitron.woff2") format("woff2")}
 @font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url("/fonts/ibmplexmono-400.woff2") format("woff2")}
@@ -454,27 +454,9 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
 
   <section class="in in-10" id="berbayar">
     <h2 class="tag">// berbayar</h2>
-    <ul class="links prodgrid">
-      <li class="prod">
-        <span class="name">BOEI.help</span>
-        <span class="desc">AI assistant tools. Akses 1 tahun.</span>
-        <span class="price">Rp50.000 / tahun</span>
-        <button class="buy" type="button" data-buy="boei-help">bayar qris &#8599;</button>
-      </li>
-      <li class="prod">
-        <span class="name">AnyChat</span>
-        <span class="desc">anychat.one. Akses 1 tahun.</span>
-        <span class="price">Rp50.000 / tahun</span>
-        <button class="buy" type="button" data-buy="anychat">bayar qris &#8599;</button>
-      </li>
-      <li class="prod">
-        <span class="name">SwipePages</span>
-        <span class="desc">Landing page builder. Lisensi lifetime.</span>
-        <span class="price">Rp500.000 / lifetime</span>
-        <button class="buy" type="button" data-buy="swipepages">bayar qris &#8599;</button>
-      </li>
-    </ul>
-    <p class="note">bayar via autopay — QRIS dinamis + kode unik, verifikasi otomatis. tools yang kupakai → <a href="/gear">//gear</a></p>
+    <ul class="links prodgrid" data-products="paid"></ul>
+    <noscript><p class="note">produk berbayar butuh JavaScript — aktifkan lalu refresh.</p></noscript>
+    <p class="note">bayar via autopay — QRIS dinamis + kode unik, verifikasi otomatis. tools → <a href="/gear">//gear</a> · akun → <a href="/member">//member</a></p>
   </section>
 
   <footer class="in in-10">
