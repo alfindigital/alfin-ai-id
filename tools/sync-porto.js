@@ -18,7 +18,8 @@ const FOOTER_SET = new Set([
 ]);
 
 const unesc = (s) => s.replace(/&amp;/g, "&").replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
-const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const esc = (s) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
 // Slot icon konsisten: Telegram / GitHub / globe untuk link web biasa.
 const slotFor = (url) => {
@@ -31,14 +32,18 @@ const slotFor = (url) => {
 };
 
 const metaFor = (gh) =>
-  `<span class="meta">${gh ? '<svg class="ic oss" aria-label="open source"><use href="#i-gh"/></svg>' : ""}<span class="arr">&#8599;</span></span>`;
+  `<span class="meta">${gh ? '<svg class="ic oss" role="img" aria-label="open source"><use href="#i-gh"/></svg>' : ""}<span class="arr">&#8599;</span></span>`;
 
 const slugFor = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 const descFor = (url) => {
-  const u = new URL(url);
-  if (u.hostname === "t.me") return "@" + u.pathname.slice(1);
-  return u.hostname + (u.pathname !== "/" ? u.pathname.replace(/\/$/, "") : "");
+  try {
+    const u = new URL(url);
+    if (u.hostname === "t.me") return "@" + u.pathname.slice(1);
+    return u.hostname + (u.pathname !== "/" ? u.pathname.replace(/\/$/, "") : "");
+  } catch {
+    return url;
+  }
 };
 
 async function main() {
@@ -59,6 +64,7 @@ async function main() {
       const m = row.match(/class="lname lk" href="([^"]+)"[^>]*>([^<]+)/);
       if (!m) continue;
       const [, url, text] = m;
+      if (!/^https?:\/\//i.test(url)) continue;
       const title = unesc(text.trim());
       if (!title || FOOTER_SET.has(url)) continue;
       const note = unesc((row.match(/class="lnote">([\s\S]*?)</) || [])[1] || "").trim();
@@ -82,10 +88,10 @@ async function main() {
         const rows = g.links
           .map(
             (l) =>
-              `      <li><a href="${l.url}" target="_blank" rel="noopener">${slotFor(l.url)}${metaFor(l.gh)}<span class="main"><span class="name">${esc(l.title)}</span><span class="desc">${esc(l.note || descFor(l.url))}</span></span></a></li>`,
+              `      <li><a href="${esc(l.url)}" target="_blank" rel="noopener">${slotFor(l.url)}${metaFor(l.gh)}<span class="main"><span class="name">${esc(l.title)}</span><span class="desc">${esc(l.note || descFor(l.url))}</span></span></a></li>`,
           )
           .join("\n");
-        return `  <section class="in in-${gi + 3}" id="${slugFor(g.name)}">\n    <p class="tag">// ${esc(g.name)}</p>\n    <ul class="links">\n${rows}\n    </ul>\n  </section>`;
+        return `  <section class="in in-${gi + 3}" id="${slugFor(g.name)}">\n    <h2 class="tag">// ${esc(g.name)}</h2>\n    <ul class="links">\n${rows}\n    </ul>\n  </section>`;
       })
       .join("\n\n");
 

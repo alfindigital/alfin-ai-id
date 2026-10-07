@@ -28,6 +28,8 @@ try {
   log(`drift terdeteksi (${syncOut}) — deploying`);
   run("node tools/build-dist.js");
   run("npx wrangler deploy");
+  log("deploy ok — verifikasi produksi");
+  run("node tools/verify.js");
   run('git add index.html && git commit -m "chore: auto-sync dari porto (scheduled)" && git push');
   log("deployed + committed");
 } catch (e) {

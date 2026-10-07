@@ -14,11 +14,7 @@ const ASSETS = [
   "/fonts/ibmplexmono-700.woff2",
 ];
 
-const MARKERS = [
-  "grid-template-columns:repeat(4,1fr)",
-  'class="ic oss"',
-  "mailto:", // harus TIDAK ada — dicek terbalik di bawah
-];
+const MARKERS = ["grid-template-columns:repeat(4,1fr)", 'class="ic oss"'];
 
 async function main() {
   let fail = 0;
