@@ -1,6 +1,10 @@
 name = "alfin-ai-id"
 account_id = "b534acd3a8238a6391b64da112d23eaf"
 compatibility_date = "2025-10-01"
+main = "src/worker.js"
+
+[vars]
+AUTOPAY_BASE_URL = "https://autopay.web.id"
 
 routes = [
   { pattern = "alfin.ai.id", custom_domain = true },
@@ -9,4 +13,5 @@ routes = [
 
 [assets]
 directory = "./dist"
+binding = "ASSETS"
 not_found_handling = "404-page"

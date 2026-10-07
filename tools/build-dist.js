@@ -8,9 +8,11 @@ const dist = path.join(root, "dist");
 const PUBLIC_FILES = [
   "index.html",
   "404.html",
+  "gear.html",
   "favicon.svg",
   "_headers",
   "theme.js",
+  "pay.js",
   "og.png",
   "apple-touch-icon.png",
 ];

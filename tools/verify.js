@@ -4,7 +4,9 @@ const BASE = process.env.BASE || "https://alfin.ai.id";
 
 const ASSETS = [
   "/",
+  "/gear",
   "/theme.js",
+  "/pay.js",
   "/favicon.svg",
   "/og.png",
   "/apple-touch-icon.png",
@@ -42,6 +44,12 @@ async function main() {
   else { console.log("FAIL badge OSS hilang"); fail++; }
   if (!html.includes("fonts.googleapis.com")) console.log("ok  Google Fonts nol");
   else { console.log("FAIL Google Fonts masih direferensikan"); fail++; }
+  if (html.includes('data-buy="swipepages"') && html.includes("// berbayar")) console.log("ok  produk berbayar ada");
+  else { console.log("FAIL section berbayar hilang"); fail++; }
+
+  const gear = await fetch(BASE + "/gear").then((r) => r.text());
+  if (gear.includes("woxo.tech") && gear.includes("jogg.ai")) console.log("ok  /gear woxo+jogg ada");
+  else { console.log("FAIL /gear konten hilang"); fail++; }
 
   const r404 = await fetch(BASE + "/path-ngasal-" + Date.now());
   console.log(`${r404.status === 404 ? "ok " : "FAIL"} /random -> ${r404.status}`);
