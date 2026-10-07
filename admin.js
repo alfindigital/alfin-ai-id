@@ -35,6 +35,7 @@
           <td><b>${esc(p.slug)}</b></td><td>${esc(p.kind)}</td>
           <td><b>${esc(p.name)}</b><br><span class="muted">${esc(p.desc)}</span></td>
           <td>${rp(p.price)}</td><td>${esc(p.billing || "-")}</td><td>${esc(p.access)}</td>
+          <td><input type="text" value="${esc(p.category || "")}" data-f="cat" style="width:5rem" placeholder="-"></td>
           <td>${p.url ? `<a href="${esc(p.url)}" style="color:var(--accent);text-decoration:none" rel="noopener">link</a>` : "-"}</td>
           <td><input type="number" value="${p.sort}" data-f="sort" style="width:3.5rem"></td>
           <td><input type="checkbox" ${p.active ? "checked" : ""} data-f="active"></td>
@@ -87,6 +88,7 @@
     if (!p) return;
     p.sort = parseInt(tr.querySelector('[data-f="sort"]').value, 10) || 0;
     p.active = tr.querySelector('[data-f="active"]').checked;
+    p.category = tr.querySelector('[data-f="cat"]').value.trim();
     await api("/api/admin/products", "POST", p);
     loadPanel();
   });
@@ -100,6 +102,7 @@
       price: $("np-price").value,
       billing: $("np-billing").value,
       access: $("np-access").value,
+      category: $("np-cat").value.trim(),
       url: $("np-url").value.trim(),
     });
     msg("np-msg", d.ok ? "tersimpan" : d.error || "gagal", d.ok);

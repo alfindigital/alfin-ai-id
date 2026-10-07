@@ -11,17 +11,32 @@
       try {
         const r = await fetch("/api/products?kind=" + encodeURIComponent(kind));
         const d = await r.json();
-        const items = (d.products || []).map((p) => {
+        const tile = (p) => {
           if (kind === "gear") {
             return `<li><a href="${esc(p.url)}" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">${esc(p.name)}</span><span class="desc">${esc(p.desc)}</span></span></a></li>`;
           }
           const per = p.billing === "yearly" ? " / tahun" : p.billing === "lifetime" ? " / lifetime" : "";
           const lock = p.access === "member" ? " · <span class=\"lock\">member</span>" : "";
           return `<li class="prod"><span class="name">${esc(p.name)}${lock}</span><span class="desc">${esc(p.desc)}</span><span class="price">${rp(p.price)}${per}</span><button class="buy" type="button" data-buy="${esc(p.slug)}">bayar qris &#8599;</button></li>`;
-        });
-        g.innerHTML = items.join("") || `<li class="prod"><span class="desc">belum ada item.</span></li>`;
+        };
+        const prods = d.products || [];
+        if ("group" in g.dataset) {
+          const groups = new Map();
+          for (const p of prods) {
+            const c = p.category || "lainnya";
+            if (!groups.has(c)) groups.set(c, []);
+            groups.get(c).push(p);
+          }
+          g.innerHTML = [...groups.entries()]
+            .map(([c, items]) => `<h3 class="tag">//${esc(c)}</h3><ul class="links">${items.map(tile).join("")}</ul>`)
+            .join("") || `<p class="note">belum ada item.</p>`;
+        } else {
+          g.innerHTML = prods.map(tile).join("") || `<li class="prod"><span class="desc">belum ada item.</span></li>`;
+        }
       } catch {
-        g.innerHTML = `<li class="prod"><span class="desc">gagal memuat — refresh halaman.</span></li>`;
+        g.innerHTML = "group" in g.dataset
+          ? `<p class="note">gagal memuat — refresh halaman.</p>`
+          : `<li class="prod"><span class="desc">gagal memuat — refresh halaman.</span></li>`;
       }
     }
   }

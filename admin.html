@@ -100,7 +100,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);padding-top:1rem;text-al
     <div class="card">
       <h2 class="tag">produk <span class="muted">(paid + gear — sinkron ke / &amp; /gear)</span></h2>
       <table id="tbl-prod"><thead><tr>
-        <th>slug</th><th>kind</th><th>nama / desc</th><th>harga</th><th>billing</th><th>access</th><th>url</th><th>sort</th><th>on</th><th></th>
+        <th>slug</th><th>kind</th><th>nama / desc</th><th>harga</th><th>billing</th><th>access</th><th>kategori</th><th>url</th><th>sort</th><th>on</th><th></th>
       </tr></thead><tbody></tbody></table>
       <details style="margin-top:.8rem">
         <summary class="muted" style="cursor:pointer">+ produk / gear baru</summary>
@@ -112,6 +112,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);padding-top:1rem;text-al
           <div><label>harga (rp)</label><input id="np-price" type="number" min="0"></div>
           <div><label>billing</label><select id="np-billing"><option value=""></option><option>yearly</option><option>lifetime</option></select></div>
           <div><label>access</label><select id="np-access"><option>public</option><option>member</option></select></div>
+          <div><label>kategori (utk gear)</label><input id="np-cat" placeholder="video / pages / …"></div>
           <div style="grid-column:1/-1"><label>url (utk gear)</label><input id="np-url" placeholder="https://…"></div>
         </div>
         <button class="btn" id="np-add" type="button" style="margin-top:.6rem">tambah →</button>

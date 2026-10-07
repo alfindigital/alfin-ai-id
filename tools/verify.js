@@ -57,8 +57,13 @@ async function main() {
   else { console.log("FAIL api products paid"); fail++; }
 
   const gearApi = await fetch(BASE + "/api/products?kind=gear").then((r) => r.json()).catch(() => ({}));
-  const gurls = (gearApi.products || []).map((p) => p.url);
-  if (gurls.includes("https://woxo.tech") && gurls.includes("https://jogg.ai")) console.log("ok  api gear: woxo+jogg");
+  const gear = gearApi.products || [];
+  const gurls = gear.map((p) => p.url);
+  const gcats = new Set(gear.map((p) => p.category));
+  if (gurls.includes("https://woxo.tech") && gurls.includes("https://jogg.ai") &&
+      gurls.includes("https://interacty.me") && gurls.includes("https://booltool.boolv.tech") &&
+      gcats.has("video") && gcats.has("pages") && gcats.has("marketing") && gcats.has("tools") &&
+      gear.length >= 11) console.log(`ok  api gear: ${gear.length} item, ${gcats.size} kategori`);
   else { console.log("FAIL api products gear"); fail++; }
 
   const adm = await fetch(BASE + "/api/admin/products").then((r) => r.status);
