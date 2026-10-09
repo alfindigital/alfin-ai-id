@@ -1,0 +1,88 @@
+// Import katalog device: download gambar remote -> img/device/<slug>-<n>.webp
+// lalu tulis device.sql (INSERT OR REPLACE, idempotent) untuk seed D1.
+// Jalankan: node tools/device-import.js
+const fs = require("fs");
+const path = require("path");
+const devices = require("./device-data");
+
+const root = path.join(__dirname, "..");
+const imgDir = path.join(root, "img", "device");
+const sqlOut = path.join(root, "device.sql");
+
+const UA = { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" };
+
+const slugOk = (s) => /^[a-z0-9-]{1,32}$/.test(s);
+const escSql = (s) => String(s).replace(/'/g, "''");
+
+async function fetchImg(url, dest) {
+  const r = await fetch(url, { headers: UA, redirect: "follow" });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const buf = Buffer.from(await r.arrayBuffer());
+  if (buf.length < 1000) throw new Error(`kekecilan ${buf.length}b`);
+  fs.writeFileSync(dest, buf);
+  return buf.length;
+}
+
+async function pool(items, size, fn) {
+  const fails = [];
+  let i = 0;
+  await Promise.all(
+    Array.from({ length: size }, async () => {
+      while (i < items.length) {
+        const it = items[i++];
+        try { await fn(it); } catch (e) { fails.push(`${it.slug || it}: ${e.message}`); }
+      }
+    })
+  );
+  return fails;
+}
+
+async function main() {
+  fs.mkdirSync(imgDir, { recursive: true });
+
+  // Dedupe URL gambar per produk + siapkan job download.
+  const jobs = [];
+  for (const d of devices) {
+    if (!slugOk(d.slug)) throw new Error(`slug invalid: ${d.slug}`);
+    if (!d.name || !d.desc) throw new Error(`name/desc kosong: ${d.slug}`);
+    if (!d.shopee && !d.tokopedia) console.warn(`WARN ${d.slug}: tanpa link`);
+    d.images = [...new Set((d.images || []).filter(Boolean))];
+    d.localImages = d.images.map((_, i) => `/img/device/${d.slug}-${i + 1}.webp`);
+    d.images.forEach((url, i) =>
+      jobs.push({ slug: d.slug, url, dest: path.join(imgDir, `${d.slug}-${i + 1}.webp`) }));
+  }
+
+  const fails = await pool(jobs, 6, async (j) => {
+    if (fs.existsSync(j.dest) && fs.statSync(j.dest).size > 1000) return;
+    const n = await fetchImg(j.url, j.dest);
+    console.log(`ok  ${path.basename(j.dest)} ${(n / 1024).toFixed(0)}KB`);
+  });
+  for (const f of fails) console.log(`FAIL ${f}`);
+
+  // Tulis device.sql — rows devices saja; kolom data = JSON extras.
+  const rows = devices.map((d, i) => {
+    const data = {
+      tags: d.tags,
+      links: Object.fromEntries(
+        [["shopee", d.shopee], ["tokopedia", d.tokopedia]].filter(([, u]) => u)
+      ),
+      images: d.localImages,
+    };
+    const url = d.shopee || d.tokopedia;
+    const cat = (d.tags[0] || "lainnya").toLowerCase().replace(/[^a-z0-9-]/g, "");
+    return ` ('${escSql(d.slug)}','device','${escSql(d.name)}','${escSql(d.desc)}',0,'','public','${escSql(url)}','${escSql(cat)}',${(i + 1) * 10},1,'${escSql(JSON.stringify(data))}')`;
+  });
+  const sql =
+    `-- device.sql — seed kind='device' (generated oleh tools/device-import.js).\n` +
+    `-- Wajib: kolom products.data sudah ada (ALTER sekali, lihat HANDOFF).\n` +
+    `INSERT OR REPLACE INTO products (slug,kind,name,"desc",price,billing,access,url,category,sort,active,data) VALUES\n` +
+    rows.join(",\n") +
+    ";\n";
+  fs.writeFileSync(sqlOut, sql);
+
+  console.log(`\n${devices.length} device, ${jobs.length} gambar, ${fails.length} gagal`);
+  console.log(`device.sql ditulis (${(fs.statSync(sqlOut).size / 1024).toFixed(1)}KB)`);
+  if (fails.length) process.exitCode = 1;
+}
+
+main().catch((e) => { console.error(e); process.exit(1); });

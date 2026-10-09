@@ -104,6 +104,7 @@
       access: $("np-access").value,
       category: $("np-cat").value.trim(),
       url: $("np-url").value.trim(),
+      data: $("np-data").value.trim(),
     });
     msg("np-msg", d.ok ? "tersimpan" : d.error || "gagal", d.ok);
     if (d.ok) loadPanel();

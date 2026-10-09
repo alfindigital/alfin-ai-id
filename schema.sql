@@ -7,8 +7,9 @@ CREATE TABLE IF NOT EXISTS products (
   price     INTEGER NOT NULL DEFAULT 0,        -- rupiah; 0 untuk gear
   billing   TEXT NOT NULL DEFAULT '',          -- 'yearly' | 'lifetime' | ''
   access    TEXT NOT NULL DEFAULT 'public',    -- 'member' | 'public'
-  url       TEXT NOT NULL DEFAULT '',          -- gear: link eksternal
-  category  TEXT NOT NULL DEFAULT '',          -- gear: grup '//kategori' di /gear
+  url       TEXT NOT NULL DEFAULT '',          -- gear/device: link eksternal utama
+  category  TEXT NOT NULL DEFAULT '',          -- gear/device: grup '//kategori'
+  data      TEXT NOT NULL DEFAULT '',          -- device: JSON {tags,links,images}
   sort      INTEGER NOT NULL DEFAULT 0,
   active    INTEGER NOT NULL DEFAULT 1
 );

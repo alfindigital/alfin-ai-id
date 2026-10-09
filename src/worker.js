@@ -79,7 +79,7 @@ const jsonBody = async (req) => { try { return await req.json(); } catch { retur
 async function productsList(env, url) {
   const kind = url.searchParams.get("kind") || "paid";
   const { results } = await env.DB.prepare(
-    "SELECT slug,kind,name,\"desc\",price,billing,access,url,category,sort FROM products WHERE active=1 AND kind=? ORDER BY sort,slug"
+    "SELECT slug,kind,name,\"desc\",price,billing,access,url,category,data,sort FROM products WHERE active=1 AND kind=? ORDER BY sort,slug"
   ).bind(kind).all();
   return j(200, { ok: true, products: results || [] });
 }
@@ -280,18 +280,22 @@ async function adminProducts(request, env) {
     if (!isJson(request)) return j(400, { ok: false, error: "json only" });
     const b = await jsonBody(request);
     if (!b || !/^[a-z0-9-]{1,32}$/.test(b.slug || "")) return j(400, { ok: false, error: "slug invalid" });
-    const kind = b.kind === "gear" ? "gear" : "paid";
+    const kind = ["paid", "gear", "device"].includes(b.kind) ? b.kind : "paid";
     const access = b.access === "member" ? "member" : "public";
     const category = String(b.category || "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 24);
+    let data = "";
+    if (typeof b.data === "string" && b.data.length <= 20000) {
+      try { data = JSON.stringify(JSON.parse(b.data)); } catch { return j(400, { ok: false, error: "data bukan JSON valid" }); }
+    }
     await env.DB.prepare(
-      `INSERT INTO products (slug,kind,name,"desc",price,billing,access,url,category,sort,active)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?)
+      `INSERT INTO products (slug,kind,name,"desc",price,billing,access,url,category,data,sort,active)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
        ON CONFLICT(slug) DO UPDATE SET kind=excluded.kind,name=excluded.name,"desc"=excluded."desc",
          price=excluded.price,billing=excluded.billing,access=excluded.access,url=excluded.url,
-         category=excluded.category,sort=excluded.sort,active=excluded.active`
+         category=excluded.category,data=excluded.data,sort=excluded.sort,active=excluded.active`
     ).bind(b.slug, kind, String(b.name || b.slug).slice(0, 64), String(b.desc || "").slice(0, 200),
       Math.max(0, parseInt(b.price, 10) || 0), String(b.billing || ""), access,
-      String(b.url || "").slice(0, 200), category, parseInt(b.sort, 10) || 0, b.active === false ? 0 : 1).run();
+      String(b.url || "").slice(0, 200), category, data, parseInt(b.sort, 10) || 0, b.active === false ? 0 : 1).run();
     return j(200, { ok: true });
   }
   return j(405, { ok: false, error: "method" });

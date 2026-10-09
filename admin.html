@@ -106,7 +106,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);padding-top:1rem;text-al
         <summary class="muted" style="cursor:pointer">+ produk / gear baru</summary>
         <div class="grid2" style="margin-top:.7rem">
           <div><label>slug</label><input id="np-slug" placeholder="nama-slug"></div>
-          <div><label>kind</label><select id="np-kind"><option>paid</option><option>gear</option></select></div>
+          <div><label>kind</label><select id="np-kind"><option>paid</option><option>gear</option><option>device</option></select></div>
           <div><label>nama</label><input id="np-name"></div>
           <div style="grid-column:1/-1"><label>desc</label><input id="np-desc"></div>
           <div><label>harga (rp)</label><input id="np-price" type="number" min="0"></div>
@@ -114,6 +114,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);padding-top:1rem;text-al
           <div><label>access</label><select id="np-access"><option>public</option><option>member</option></select></div>
           <div><label>kategori (utk gear)</label><input id="np-cat" placeholder="video / pages / …"></div>
           <div style="grid-column:1/-1"><label>url (utk gear)</label><input id="np-url" placeholder="https://…"></div>
+          <div style="grid-column:1/-1"><label>data json (utk device)</label><input id="np-data" placeholder='{"tags":[…],"links":{…},"images":[…]}'></div>
         </div>
         <button class="btn" id="np-add" type="button" style="margin-top:.6rem">tambah →</button>
         <p class="msg" id="np-msg"></p>

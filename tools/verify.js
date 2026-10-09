@@ -5,6 +5,7 @@ const BASE = process.env.BASE || "https://alfin.ai.id";
 const ASSETS = [
   "/",
   "/gear",
+  "/device",
   "/member",
   "/admin",
   "/theme.js",
@@ -65,6 +66,17 @@ async function main() {
       gcats.has("video") && gcats.has("pages") && gcats.has("marketing") && gcats.has("tools") &&
       gear.length >= 11) console.log(`ok  api gear: ${gear.length} item, ${gcats.size} kategori`);
   else { console.log("FAIL api products gear"); fail++; }
+
+  const devApi = await fetch(BASE + "/api/products?kind=device").then((r) => r.json()).catch(() => ({}));
+  const dev = devApi.products || [];
+  const withImg = dev.filter((p) => { try { return JSON.parse(p.data || "{}").images?.length; } catch { return false; } });
+  if (dev.length >= 30 && withImg.length === dev.length) console.log(`ok  api device: ${dev.length} item, semua punya gambar`);
+  else { console.log(`FAIL api products device (${dev.length} item, ${withImg.length} berimg)`); fail++; }
+
+  const imgOk = await fetch(BASE + "/img/device/monitor-lenovo-l24m4a-1.webp", { redirect: "manual" })
+    .then((r) => r.status === 200).catch(() => false);
+  console.log(`${imgOk ? "ok " : "FAIL"} /img/device/* tersaji`);
+  if (!imgOk) fail++;
 
   const adm = await fetch(BASE + "/api/admin/products").then((r) => r.status);
   console.log(`${adm === 401 ? "ok " : "FAIL"} admin gate -> ${adm}`);

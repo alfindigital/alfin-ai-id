@@ -9,6 +9,7 @@ const PUBLIC_FILES = [
   "index.html",
   "404.html",
   "gear.html",
+  "device.html",
   "member.html",
   "admin.html",
   "favicon.svg",
@@ -22,7 +23,10 @@ const PUBLIC_FILES = [
 ];
 
 // fonts/: hanya woff2 yang dideploy (ttf dipakai build-time utk render og.png)
-const PUBLIC_DIRS = [{ dir: "fonts", exts: [".woff2"] }];
+const PUBLIC_DIRS = [
+  { dir: "fonts", exts: [".woff2"] },
+  { dir: "img/device", exts: [".webp", ".jpg", ".jpeg", ".png", ".avif"] },
+];
 
 fs.rmSync(dist, { recursive: true, force: true });
 fs.mkdirSync(dist, { recursive: true });
