@@ -13,6 +13,8 @@ const PUBLIC_FILES = [
   "member.html",
   "admin.html",
   "favicon.svg",
+  "robots.txt",
+  "sitemap.xml",
   "_headers",
   "theme.js",
   "store.js",

@@ -8,6 +8,8 @@ const ASSETS = [
   "/device",
   "/member",
   "/admin",
+  "/robots.txt",
+  "/sitemap.xml",
   "/theme.js",
   "/store.js",
   "/member.js",
@@ -51,6 +53,8 @@ async function main() {
   else { console.log("FAIL Google Fonts still referenced"); fail++; }
   if (html.includes('data-products="paid"') && html.includes("// paid")) console.log("ok  paid section present");
   else { console.log("FAIL paid section missing"); fail++; }
+  if (html.includes('class="menu"') && html.includes('href="/gear"')) console.log("ok  sitemap menu present");
+  else { console.log("FAIL sitemap menu missing"); fail++; }
 
   const paid = await fetch(BASE + "/api/products?kind=paid").then((r) => r.json()).catch(() => ({}));
   const slugs = (paid.products || []).map((p) => p.slug);
@@ -81,6 +85,26 @@ async function main() {
   const adm = await fetch(BASE + "/api/admin/products").then((r) => r.status);
   console.log(`${adm === 401 ? "ok " : "FAIL"} admin gate -> ${adm}`);
   if (adm !== 401) fail++;
+
+  const buyGet = await fetch(BASE + "/api/buy/swipepages").then((r) => r.status);
+  console.log(`${buyGet === 405 ? "ok " : "FAIL"} buy GET -> ${buyGet}`);
+  if (buyGet !== 405) fail++;
+
+  const buyEvil = await fetch(BASE + "/api/buy/swipepages", {
+    method: "POST",
+    headers: { "content-type": "application/json", origin: "https://evil.example" },
+    body: "{}",
+  }).then((r) => r.status);
+  console.log(`${buyEvil === 403 ? "ok " : "FAIL"} buy evil-origin -> ${buyEvil}`);
+  if (buyEvil !== 403) fail++;
+
+  const hookBad = await fetch(BASE + "/api/webhook/autopay", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: "{}",
+  }).then((r) => r.status);
+  console.log(`${hookBad === 401 ? "ok " : "FAIL"} webhook unsigned -> ${hookBad}`);
+  if (hookBad !== 401) fail++;
 
   const r404 = await fetch(BASE + "/path-ngasal-" + Date.now());
   console.log(`${r404.status === 404 ? "ok " : "FAIL"} /random -> ${r404.status}`);

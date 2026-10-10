@@ -35,13 +35,13 @@
           }
           const per = p.billing === "yearly" ? " / year" : p.billing === "lifetime" ? " / lifetime" : "";
           const lock = p.access === "member" ? " · <span class=\"lock\">member</span>" : "";
-          return `<li class="prod"><span class="name">${esc(p.name)}${lock}</span><span class="desc">${esc(p.desc)}</span><span class="price">${rp(p.price)}${per}</span><button class="buy" type="button" data-buy="${esc(p.slug)}">pay qris &#8599;</button></li>`;
+          return `<li class="prod"><span class="name">${esc(p.name)}${lock}</span><span class="desc">${esc(p.desc)}</span><span class="price">${rp(p.price)}${per}</span><button class="buy" type="button" data-buy="${esc(p.slug)}" data-access="${esc(p.access)}">pay qris &#8599;</button></li>`;
         };
         const prods = d.products || [];
         if ("group" in g.dataset) {
           const groups = new Map();
           for (const p of prods) {
-            const c = p.category || "lainnya";
+            const c = p.category || "other";
             if (!groups.has(c)) groups.set(c, []);
             groups.get(c).push(p);
           }
@@ -71,6 +71,17 @@
     }
     const b = e.target.closest("[data-buy]");
     if (!b || busy.has(b)) return;
+    const inp = b.parentElement.querySelector(".askmail");
+    if (inp && !b.dataset.mail) {
+      const v = inp.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) {
+        inp.classList.add("err");
+        inp.focus();
+        setTimeout(() => inp.classList.remove("err"), 1500);
+        return;
+      }
+      b.dataset.mail = v;
+    }
     busy.add(b);
     const orig = b.textContent;
     b.disabled = true;
@@ -79,12 +90,25 @@
       const r = await fetch("/api/buy/" + encodeURIComponent(b.dataset.buy), {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: "{}",
+        body: JSON.stringify({ email: b.dataset.mail || "" }),
       });
       const d = await r.json().catch(() => ({}));
       if (r.status === 401 && d.need_login) {
         b.textContent = "login first…";
         location.assign("/member?next=" + encodeURIComponent(location.pathname + location.hash));
+        return;
+      }
+      if (r.status === 400 && d.need_email) {
+        const el = document.createElement("input");
+        el.className = "askmail";
+        el.type = "email";
+        el.placeholder = "email for delivery";
+        el.setAttribute("aria-label", "email for delivery");
+        b.before(el);
+        el.focus();
+        b.textContent = "pay \u2197";
+        b.disabled = false;
+        busy.delete(b);
         return;
       }
       if (r.ok && d.checkout_url) {

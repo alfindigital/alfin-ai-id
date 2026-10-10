@@ -1,7 +1,7 @@
 -- alfin-store schema — D1 (SQLite). Idempotent migration: safe to re-run.
 CREATE TABLE IF NOT EXISTS products (
   slug      TEXT PRIMARY KEY,
-  kind      TEXT NOT NULL DEFAULT 'paid',      -- 'paid' | 'gear'
+  kind      TEXT NOT NULL DEFAULT 'paid',      -- 'paid' | 'gear' | 'device'
   name      TEXT NOT NULL,
   "desc"    TEXT NOT NULL DEFAULT '',
   price     INTEGER NOT NULL DEFAULT 0,        -- rupiah; 0 for gear
@@ -36,7 +36,8 @@ CREATE INDEX IF NOT EXISTS idx_sessions_exp ON sessions(expires_at);
 CREATE TABLE IF NOT EXISTS orders (
   ref_id       TEXT PRIMARY KEY,
   product_slug TEXT NOT NULL,
-  user_id      INTEGER,                        -- NULL for public products
+  user_id      INTEGER,                        -- NULL for guest/public checkouts
+  buyer_email  TEXT NOT NULL DEFAULT '',       -- delivery channel (guest email or account email)
   amount       INTEGER NOT NULL,               -- base price
   payable      INTEGER NOT NULL,               -- amount + unique_code
   status       TEXT NOT NULL DEFAULT 'pending',
@@ -67,10 +68,20 @@ CREATE TABLE IF NOT EXISTS webhook_log (
   received_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- Product & gear seed (OR REPLACE: safe to reseed — updates desc/category).
+-- per-IP attempt log for /api/buy, /api/auth/*, /api/admin/login throttling
+CREATE TABLE IF NOT EXISTS attempt_log (
+  ip     TEXT NOT NULL,
+  route  TEXT NOT NULL,
+  ts     TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_attempt ON attempt_log(route,ip,ts);
+
+-- Product & gear seed — BOOTSTRAP ONLY (OR IGNORE: inserts new slugs, never
+-- overwrites). Live rows are edited via the admin panel; editing seed values
+-- here does NOT propagate once the slug exists.
 -- Note: slug is PRIMARY KEY across kinds -> gear sharing a paid product's name
 -- uses a domain suffix (anychat-one, swipepages-com).
-INSERT OR REPLACE INTO products (slug,kind,name,"desc",price,billing,access,url,category,sort,active) VALUES
+INSERT OR IGNORE INTO products (slug,kind,name,"desc",price,billing,access,url,category,sort,active) VALUES
  ('boei-help','paid','BOEI.help','AI assistant tools. 1-year access.',50000,'yearly','member','','',1,1),
  ('anychat','paid','AnyChat','anychat.one. 1-year access.',50000,'yearly','member','','',2,1),
  ('swipepages','paid','SwipePages','Landing page builder. Lifetime license.',500000,'lifetime','public','','',3,1),

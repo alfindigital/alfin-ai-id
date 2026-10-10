@@ -48,7 +48,7 @@
   function renderOrders(list) {
     document.querySelector("#tbl-ord tbody").innerHTML = list.length
       ? list.map(
-          (o) => `<tr><td>${esc(o.ref_id)}</td><td><b>${esc(o.product_slug)}</b></td><td>${esc(o.email || "-")}</td>
+          (o) => `<tr><td>${esc(o.ref_id)}</td><td><b>${esc(o.product_slug)}</b></td><td>${esc(o.email || o.buyer_email || "-")}</td>
             <td>${rp(o.payable)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td>
             <td>${esc((o.created_at || "").slice(5, 16))}</td><td>${esc((o.paid_at || "-").slice(5, 16))}</td></tr>`
         ).join("")

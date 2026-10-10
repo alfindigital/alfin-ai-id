@@ -7,7 +7,8 @@
     "deploy": "node tools/build-dist.js && wrangler deploy",
     "verify": "node tools/verify.js",
     "qr": "node tools/make-qr.js",
-    "test:visual": "node tools/visual-check.js"
+    "test:visual": "node tools/visual-check.js",
+    "backup": "node tools/backup-db.js"
   },
   "devDependencies": {
     "playwright-core": "^1.63.0",

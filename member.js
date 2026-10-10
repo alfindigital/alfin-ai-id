@@ -11,7 +11,8 @@
     String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmt = (iso) => (iso ? String(iso).slice(0, 10) : "lifetime");
   const rp = (n) => "Rp" + Number(n).toLocaleString("en-US");
-  const next = new URLSearchParams(location.search).get("next") || "";
+  const rawNext = new URLSearchParams(location.search).get("next") || "";
+  const next = /^\/(?!\/)/.test(rawNext) ? rawNext : "";
 
   function setMsg(id, txt, ok) {
     const m = $(id);
@@ -36,7 +37,7 @@
     document.querySelector("#tbl-ent tbody").innerHTML = et
       .map(
         (e) =>
-          `<tr><td><b>${esc(e.name || e.product_slug)}</b></td><td>until ${esc(fmt(e.ends_at))}</td><td>${esc(e.source)}</td></tr>`
+          `<tr><td><b>${esc(e.name || e.product_slug)}</b></td><td>${e.ends_at ? "until " + esc(fmt(e.ends_at)) : "lifetime"}</td><td>${esc(e.source)}</td></tr>`
       )
       .join("");
 

@@ -74,6 +74,25 @@ const makeSession = (env, { user_id = null, admin = 0, days }) =>
 
 const jsonBody = async (req) => { try { return await req.json(); } catch { return null; } };
 
+// Per-IP throttle for sensitive endpoints (attempt_log table) + lazy
+// housekeeping: expired sessions/orders/attempts get swept occasionally.
+async function throttle(env, request, route, limit, windowMin = 10) {
+  const ip = request.headers.get("cf-connecting-ip") || "anon";
+  const { n } = await env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM attempt_log WHERE route=? AND ip=? AND ts>datetime('now',?)"
+  ).bind(route, ip, `-${windowMin} minutes`).first();
+  if (n >= limit) return true;
+  await env.DB.prepare("INSERT INTO attempt_log (ip,route) VALUES (?,?)").bind(ip, route).run();
+  if (Math.random() < 0.05) {
+    await env.DB.batch([
+      env.DB.prepare("DELETE FROM attempt_log WHERE ts<datetime('now','-1 hour')"),
+      env.DB.prepare("DELETE FROM sessions WHERE expires_at<datetime('now')"),
+      env.DB.prepare("UPDATE orders SET status='expired' WHERE status='pending' AND created_at<datetime('now','-1 day')"),
+    ]).catch((e) => console.error("housekeep:", e));
+  }
+  return false;
+}
+
 // ── API handlers ───────────────────────────────────────────────────────────
 
 async function productsList(env, url) {
@@ -89,9 +108,25 @@ async function buy(request, env, slug) {
   if (!product) return j(404, { ok: false, error: "unknown product" });
   if (!originOk(request)) return j(403, { ok: false, error: "forbidden" });
   if (!env.AUTOPAY_API_KEY) return j(500, { ok: false, error: "payments not configured" });
+  if (await throttle(env, request, "buy", 10)) return j(429, { ok: false, error: "too many attempts — try again later" });
 
   const sess = await userOf(env, request);
   if (product.access === "member" && !sess) return j(401, { ok: false, need_login: true, error: "login required for member products" });
+
+  // Guest checkout needs a delivery channel: email is required for public
+  // products without a session (member buys inherit the account email).
+  let buyerEmail = "";
+  if (sess) {
+    const u = await env.DB.prepare("SELECT email FROM users WHERE id=?").bind(sess.user_id).first();
+    buyerEmail = (u && u.email) || "";
+  } else {
+    const b = await jsonBody(request);
+    const em = b && typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)) {
+      return j(400, { ok: false, need_email: true, error: "valid email required for delivery" });
+    }
+    buyerEmail = em;
+  }
 
   const base = (env.AUTOPAY_BASE_URL || AUTOPAY_BASE_DEFAULT).replace(/\/+$/, "");
   const ref = `ALFINAI-${slug.replace(/-/g, "").toUpperCase().slice(0, 16)}-${randHex(4)}`;
@@ -122,8 +157,8 @@ async function buy(request, env, slug) {
 
   const inv = data.data;
   await env.DB.prepare(
-    "INSERT INTO orders (ref_id,product_slug,user_id,amount,payable,checkout_url) VALUES (?,?,?,?,?,?)"
-  ).bind(ref, slug, sess ? sess.user_id : null, product.price, inv.amount || product.price, inv.checkout_url).run();
+    "INSERT INTO orders (ref_id,product_slug,user_id,buyer_email,amount,payable,checkout_url) VALUES (?,?,?,?,?,?,?)"
+  ).bind(ref, slug, sess ? sess.user_id : null, buyerEmail, product.price, inv.amount || product.price, inv.checkout_url).run();
 
   return j(200, { ok: true, checkout_url: inv.checkout_url, ref_id: ref, expires_at: inv.expires_at || null });
 }
@@ -177,6 +212,7 @@ async function webhook(request, env) {
 
 async function register(request, env) {
   if (!isJson(request)) return j(400, { ok: false, error: "json only" });
+  if (await throttle(env, request, "register", 5)) return j(429, { ok: false, error: "too many attempts — try again later" });
   const b = await jsonBody(request);
   const email = b && typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
   const pass = b && typeof b.password === "string" ? b.password : "";
@@ -201,6 +237,7 @@ async function register(request, env) {
 
 async function login(request, env) {
   if (!isJson(request)) return j(400, { ok: false, error: "json only" });
+  if (await throttle(env, request, "login", 10)) return j(429, { ok: false, error: "too many attempts — try again later" });
   const b = await jsonBody(request);
   const email = b && typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
   const pass = b && typeof b.password === "string" ? b.password : "";
@@ -244,6 +281,7 @@ async function memberEntitlements(request, env) {
 async function memberOrders(request, env) {
   const s = await userOf(env, request);
   if (!s) return j(401, { ok: false });
+  await env.DB.prepare("UPDATE orders SET status='expired' WHERE status='pending' AND created_at<datetime('now','-1 day')").run();
   const { results } = await env.DB.prepare(
     `SELECT o.ref_id,o.product_slug,o.amount,o.payable,o.status,o.checkout_url,o.created_at,o.paid_at,p.name
      FROM orders o LEFT JOIN products p ON p.slug=o.product_slug
@@ -256,9 +294,12 @@ async function memberOrders(request, env) {
 
 async function adminLogin(request, env) {
   if (!isJson(request)) return j(400, { ok: false, error: "json only" });
+  if (await throttle(env, request, "admin-login", 10)) return j(429, { ok: false, error: "too many attempts — try again later" });
   const b = await jsonBody(request);
   const pass = b && typeof b.password === "string" ? b.password : "";
-  if (!env.ADMIN_PASSWORD || !timingEq(pass, env.ADMIN_PASSWORD)) return j(401, { ok: false, error: "wrong password" });
+  // HMAC both sides -> fixed 64-char compare, no length oracle via timing.
+  const want = env.ADMIN_PASSWORD ? await hmacHex("pwlen", env.ADMIN_PASSWORD) : "";
+  if (!want || !timingEq(await hmacHex("pwlen", pass), want)) return j(401, { ok: false, error: "wrong password" });
   const token = randHex(16);
   await env.DB.prepare("INSERT INTO sessions (token,user_id,admin,expires_at) VALUES (?,NULL,1,datetime('now','+12 hours'))")
     .bind(token).run();
@@ -307,9 +348,10 @@ async function adminProductDelete(env, slug) {
 }
 
 async function adminOrders(env, url) {
+  await env.DB.prepare("UPDATE orders SET status='expired' WHERE status='pending' AND created_at<datetime('now','-1 day')").run();
   const lim = Math.min(200, parseInt(url.searchParams.get("limit"), 10) || 50);
   const { results } = await env.DB.prepare(
-    `SELECT o.ref_id,o.product_slug,o.amount,o.payable,o.status,o.created_at,o.paid_at,u.email
+    `SELECT o.ref_id,o.product_slug,o.amount,o.payable,o.status,o.created_at,o.paid_at,o.buyer_email,u.email
      FROM orders o LEFT JOIN users u ON u.id=o.user_id ORDER BY o.created_at DESC LIMIT ?`
   ).bind(lim).all();
   return j(200, { ok: true, orders: results || [] });
@@ -406,10 +448,11 @@ export default {
       }
       if (!resp || resp.status === 404) {
         const page = await env.ASSETS.fetch(new URL("/404", request.url));
-        return new Response(page.body, { status: 404, headers: { "content-type": "text/html; charset=utf-8" } });
+        return new Response(page.body, { status: 404, headers: page.headers });
       }
       return resp;
     } catch (e) {
+      console.error("worker error:", path, e);
       return j(500, { ok: false, error: "internal error" });
     }
   },
