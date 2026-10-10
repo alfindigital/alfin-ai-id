@@ -121,6 +121,18 @@
     if (d.ok) loadPanel();
   });
 
+  $("btn-recon").addEventListener("click", async (e) => {
+    const b = e.currentTarget;
+    b.disabled = true;
+    msg("recon-msg", "reconciling with autopay…", true);
+    const d = await api("/api/admin/reconcile", "POST", {});
+    b.disabled = false;
+    msg("recon-msg", d.ok
+      ? `checked ${d.checked}: ${d.paid} paid, ${d.closed} closed, ${d.unchanged} pending, ${d.errors} errors, ${d.skipped} skipped`
+      : d.error || "failed", !!d.ok);
+    if (d.ok && (d.paid || d.closed)) loadPanel();
+  });
+
   $("btn-alo").addEventListener("click", async () => {
     await api("/api/admin/logout", "POST", {});
     location.reload();

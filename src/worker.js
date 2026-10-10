@@ -165,7 +165,68 @@ async function buy(request, env, slug) {
 
 const url_host = (req) => { try { return new URL(req.url).host; } catch { return "alfin.ai.id"; } };
 
-async function webhook(request, env) {
+// Shared grant: order -> paid + entitlement (idempotent). Used by webhook and
+// admin reconcile. Returns the product row (or null).
+async function grantPaid(env, ref, order, txId) {
+  const product = await env.DB.prepare("SELECT name,billing FROM products WHERE slug=?").bind(order.product_slug).first();
+  const ends = product && product.billing === "yearly" ? "datetime('now','+1 year')" : "NULL";
+  await env.DB.batch([
+    env.DB.prepare("UPDATE orders SET status='paid', paid_at=datetime('now'), tx_id=? WHERE ref_id=? AND status<>'paid'").bind(txId || null, ref),
+    env.DB.prepare(`INSERT OR IGNORE INTO entitlements (user_id,product_slug,ref_id,source,ends_at) VALUES (?,?,?,'paid',${ends})`)
+      .bind(order.user_id, order.product_slug, ref),
+  ]);
+  return product;
+}
+
+// Resend transactional mail — no-op unless RESEND_API_KEY+RESEND_FROM set.
+async function sendEmail(env, msg) {
+  if (!env.RESEND_API_KEY || !env.RESEND_FROM) return false;
+  try {
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { "authorization": `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({ from: env.RESEND_FROM, ...msg }),
+    });
+    if (!r.ok) { console.error("resend", r.status, (await r.text().catch(() => "")).slice(0, 300)); return false; }
+    return true;
+  } catch (e) { console.error("resend fetch", e); return false; }
+}
+
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+// Receipt to buyer + heads-up to admin on a paid order. Fulfillment is manual,
+// so the mail is a receipt — not the product itself.
+function notifyPaid(env, ctx, order, product) {
+  if (!env.RESEND_API_KEY || !env.RESEND_FROM) return;
+  const name = (product && product.name) || order.product_slug;
+  const amount = `Rp${Number(order.payable || order.amount || 0).toLocaleString("en-US")}`;
+  const jobs = [];
+  if (order.buyer_email) {
+    jobs.push(sendEmail(env, {
+      to: order.buyer_email,
+      subject: `Payment confirmed — ${name}`,
+      html: `<div style="font-family:monospace;max-width:32rem;margin:0 auto;padding:1.5rem;border:1px solid #22262b;border-radius:10px">` +
+        `<p style="color:#e8eaed;margin:0 0 1rem">Payment confirmed for <b>${esc(name)}</b>.</p>` +
+        `<p style="color:#9aa0a6;font-size:.9rem;margin:0 0 1rem">order&nbsp;&nbsp;${esc(order.ref_id)}<br>amount&nbsp;${amount}</p>` +
+        `<p style="color:#9aa0a6;font-size:.9rem;margin:0">Your access is being provisioned and will be delivered to this email. ` +
+        `Keep your order reference for support — <a href="https://alfin.ai.id" style="color:#d97757">alfin.ai.id</a></p></div>`,
+    }));
+  }
+  if (env.ADMIN_NOTIFY) {
+    jobs.push(sendEmail(env, {
+      to: env.ADMIN_NOTIFY,
+      subject: `[paid] ${name} — ${amount}`,
+      html: `<div style="font-family:monospace;font-size:.9rem">` +
+        `<p><b>${esc(name)}</b> paid ${amount}</p>` +
+        `<p>buyer: ${esc(order.buyer_email || "(member account)")}<br>ref: ${esc(order.ref_id)}<br>` +
+        `provision access manually → <a href="https://alfin.ai.id/admin">admin</a></p></div>`,
+    }));
+  }
+  if (jobs.length && ctx && ctx.waitUntil) ctx.waitUntil(Promise.all(jobs));
+  else if (jobs.length) return Promise.all(jobs);
+}
+
+async function webhook(request, env, ctx) {
   if (!isJson(request)) return j(400, { ok: false, error: "json only" });
   const raw = await request.text();
   const ts = request.headers.get("x-autopay-timestamp") || "";
@@ -199,14 +260,8 @@ async function webhook(request, env) {
     return j(200, { ok: false, error: `amount mismatch ${p.amount} vs ${order.payable}` });
   }
 
-  const product = await env.DB.prepare("SELECT billing FROM products WHERE slug=?").bind(order.product_slug).first();
-  const ends = product && product.billing === "yearly" ? "datetime('now','+1 year')" : "NULL";
-
-  await env.DB.batch([
-    env.DB.prepare("UPDATE orders SET status='paid', paid_at=datetime('now'), tx_id=? WHERE ref_id=?").bind(p.tx_id || null, ref),
-    env.DB.prepare(`INSERT OR IGNORE INTO entitlements (user_id,product_slug,ref_id,source,ends_at) VALUES (?,?,?,'paid',${ends})`)
-      .bind(order.user_id, order.product_slug, ref),
-  ]);
+  const product = await grantPaid(env, ref, order, p.tx_id);
+  notifyPaid(env, ctx, order, product);
   return j(200, { ok: true, granted: true });
 }
 
@@ -357,6 +412,49 @@ async function adminOrders(env, url) {
   return j(200, { ok: true, orders: results || [] });
 }
 
+// Re-pull open orders against autopay (source of truth) — covers webhook
+// downtime. Pending+recent-expired rows are checked; remote 'paid' overrides
+// local 'expired'. Status token comes from the stored checkout_url (?t=).
+async function adminReconcile(request, env, ctx) {
+  if (request.method !== "POST") return j(405, { ok: false, error: "method not allowed" });
+  if (!isJson(request)) return j(400, { ok: false, error: "json only" });
+  if (await throttle(env, request, "reconcile", 6)) return j(429, { ok: false, error: "too many attempts — try again later" });
+  const base = (env.AUTOPAY_BASE_URL || AUTOPAY_BASE_DEFAULT).replace(/\/+$/, "");
+  const { results } = await env.DB.prepare(
+    `SELECT ref_id,product_slug,user_id,buyer_email,amount,payable,status,checkout_url
+     FROM orders WHERE status IN ('pending','expired') AND created_at>datetime('now','-7 day')
+     ORDER BY created_at DESC LIMIT 25`
+  ).all();
+  const out = { checked: 0, paid: 0, closed: 0, unchanged: 0, skipped: 0, errors: 0, details: [] };
+  for (const o of results || []) {
+    const m = (o.checkout_url || "").match(/[?&]t=([^&]+)/);
+    if (!m) { out.skipped++; continue; }
+    out.checked++;
+    let st = null;
+    try {
+      const r = await fetch(`${base}/api/qris/status/${encodeURIComponent(o.ref_id)}?t=${encodeURIComponent(decodeURIComponent(m[1]))}`);
+      const d = await r.json().catch(() => null);
+      if (r.ok && d && d.success) st = d.status;
+    } catch { /* fallthrough */ }
+    if (st === "paid") {
+      const product = await grantPaid(env, o.ref_id, o, null);
+      notifyPaid(env, ctx, o, product);
+      out.paid++;
+    } else if (st === "expired" || st === "cancelled") {
+      if (o.status !== st) {
+        await env.DB.prepare("UPDATE orders SET status=? WHERE ref_id=? AND status<>'paid'").bind(st, o.ref_id).run();
+      }
+      out.closed++;
+    } else if (st === "pending") {
+      out.unchanged++;
+    } else {
+      out.errors++;
+    }
+    out.details.push({ ref: o.ref_id, was: o.status, now: st || "unknown" });
+  }
+  return j(200, { ok: true, ...out });
+}
+
 async function adminEntitlements(request, env) {
   if (request.method === "GET") {
     const { results } = await env.DB.prepare(
@@ -396,7 +494,7 @@ async function adminUsers(env) {
 // ── router ─────────────────────────────────────────────────────────────────
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
 
@@ -412,7 +510,7 @@ export default {
 
         if (path === WEBHOOK_PATH) {
           if (request.method !== "POST") return j(405, { ok: false, error: "method not allowed" });
-          return webhook(request, env);
+          return webhook(request, env, ctx);
         }
 
         if (path === "/api/auth/register" && request.method === "POST") return register(request, env);
@@ -431,6 +529,7 @@ export default {
           const md = path.match(/^\/api\/admin\/products\/([a-z0-9-]{1,32})$/);
           if (md && request.method === "DELETE") return adminProductDelete(env, md[1]);
           if (path === "/api/admin/orders" && request.method === "GET") return adminOrders(env, url);
+          if (path === "/api/admin/reconcile") return adminReconcile(request, env, ctx);
           if (path === "/api/admin/entitlements") return adminEntitlements(request, env);
           if (path === "/api/admin/users" && request.method === "GET") return adminUsers(env);
           return j(404, { ok: false, error: "not found" });

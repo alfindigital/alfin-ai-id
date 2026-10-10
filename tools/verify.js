@@ -86,6 +86,14 @@ async function main() {
   console.log(`${adm === 401 ? "ok " : "FAIL"} admin gate -> ${adm}`);
   if (adm !== 401) fail++;
 
+  const rec = await fetch(BASE + "/api/admin/reconcile", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: "{}",
+  }).then((r) => r.status);
+  console.log(`${rec === 401 ? "ok " : "FAIL"} reconcile gate -> ${rec}`);
+  if (rec !== 401) fail++;
+
   const buyGet = await fetch(BASE + "/api/buy/swipepages").then((r) => r.status);
   console.log(`${buyGet === 405 ? "ok " : "FAIL"} buy GET -> ${buyGet}`);
   if (buyGet !== 405) fail++;
