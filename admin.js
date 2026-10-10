@@ -1,4 +1,4 @@
-// Admin panel: login gate -> produk CRUD, orders, entitlements, users.
+// Admin panel: login gate -> product CRUD, orders, entitlements, users.
 (() => {
   const $ = (id) => document.getElementById(id);
   const api = (p, method, body) =>
@@ -9,7 +9,7 @@
     }).then((r) => r.json().catch(() => ({})));
   const esc = (s) =>
     String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const rp = (n) => "Rp" + Number(n).toLocaleString("id-ID");
+  const rp = (n) => "Rp" + Number(n).toLocaleString("en-US");
   const msg = (id, t, ok) => { const m = $(id); m.textContent = t; m.className = "msg " + (ok ? "ok" : "err"); };
 
   async function loadPanel() {
@@ -52,7 +52,7 @@
             <td>${rp(o.payable)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td>
             <td>${esc((o.created_at || "").slice(5, 16))}</td><td>${esc((o.paid_at || "-").slice(5, 16))}</td></tr>`
         ).join("")
-      : `<tr><td colspan="7" class="muted">belum ada order.</td></tr>`;
+      : `<tr><td colspan="7" class="muted">no orders yet.</td></tr>`;
   }
 
   function renderEnts(list) {
@@ -61,7 +61,7 @@
           (e) => `<tr><td>${esc(e.email || "-")}</td><td><b>${esc(e.product_slug)}</b></td>
             <td>${esc(e.ends_at ? e.ends_at.slice(0, 10) : "lifetime")}</td><td>${esc(e.source)}</td><td>${esc(e.ref_id)}</td></tr>`
         ).join("")
-      : `<tr><td colspan="5" class="muted">belum ada entitlement.</td></tr>`;
+      : `<tr><td colspan="5" class="muted">no entitlements yet.</td></tr>`;
   }
 
   function renderUsers(list) {
@@ -69,17 +69,17 @@
       ? list.map(
           (u) => `<tr><td>${esc(u.email)}</td><td>${esc((u.created_at || "").slice(0, 10))}</td><td>${u.grants}</td><td>${u.orders}</td></tr>`
         ).join("")
-      : `<tr><td colspan="4" class="muted">belum ada user.</td></tr>`;
+      : `<tr><td colspan="4" class="muted">no users yet.</td></tr>`;
   }
 
-  // inline save/delete per row produk
+  // inline save/delete per product row
   document.querySelector("#tbl-prod").addEventListener("click", async (e) => {
     const b = e.target.closest("button[data-act]");
     if (!b) return;
     const tr = b.closest("tr");
     const slug = tr.dataset.slug;
     if (b.dataset.act === "del") {
-      if (!confirm(`hapus produk "${slug}"?`)) return;
+      if (!confirm(`delete product "${slug}"?`)) return;
       await api("/api/admin/products/" + slug, "DELETE");
       loadPanel();
       return;
@@ -106,7 +106,7 @@
       url: $("np-url").value.trim(),
       data: $("np-data").value.trim(),
     });
-    msg("np-msg", d.ok ? "tersimpan" : d.error || "gagal", d.ok);
+    msg("np-msg", d.ok ? "saved" : d.error || "failed", d.ok);
     if (d.ok) loadPanel();
   });
 
@@ -117,7 +117,7 @@
       product_slug: $("g-slug").value,
       ends_at: $("g-ends").value || null,
     });
-    msg("g-msg", d.ok ? "granted" : d.error || "gagal", d.ok);
+    msg("g-msg", d.ok ? "granted" : d.error || "failed", d.ok);
     if (d.ok) loadPanel();
   });
 
@@ -130,10 +130,10 @@
     e.preventDefault();
     const d = await api("/api/admin/login", "POST", { password: $("a-pass").value });
     if (d.ok) { $("gate").hidden = true; $("panel").hidden = false; loadPanel(); }
-    else msg("a-msg", d.error || "gagal", false);
+    else msg("a-msg", d.error || "failed", false);
   });
 
-  // boot: coba load panel (cookie admin masih hidup -> langsung masuk)
+  // boot: try loading panel (live admin cookie -> straight in)
   api("/api/admin/products").then((d) => {
     if (d.ok) { $("panel").hidden = false; loadPanel(); }
     else $("gate").hidden = false;

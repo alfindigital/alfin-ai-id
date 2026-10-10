@@ -30,7 +30,7 @@ function originOk(req) {
   return true;
 }
 
-// Mutasi wajib JSON body — form-CSRF tak bisa mengatur content-type ini.
+// Mutations require a JSON body — form-based CSRF can't set this content-type.
 const isJson = (req) => (req.headers.get("content-type") || "").includes("application/json");
 
 function cookieGet(req, name) {
@@ -86,12 +86,12 @@ async function productsList(env, url) {
 
 async function buy(request, env, slug) {
   const product = await env.DB.prepare("SELECT * FROM products WHERE slug=? AND kind='paid' AND active=1").bind(slug).first();
-  if (!product) return j(404, { ok: false, error: "produk tidak dikenal" });
+  if (!product) return j(404, { ok: false, error: "unknown product" });
   if (!originOk(request)) return j(403, { ok: false, error: "forbidden" });
-  if (!env.AUTOPAY_API_KEY) return j(500, { ok: false, error: "pembayaran belum dikonfigurasi" });
+  if (!env.AUTOPAY_API_KEY) return j(500, { ok: false, error: "payments not configured" });
 
   const sess = await userOf(env, request);
-  if (product.access === "member" && !sess) return j(401, { ok: false, need_login: true, error: "login dulu untuk produk member" });
+  if (product.access === "member" && !sess) return j(401, { ok: false, need_login: true, error: "login required for member products" });
 
   const base = (env.AUTOPAY_BASE_URL || AUTOPAY_BASE_DEFAULT).replace(/\/+$/, "");
   const ref = `ALFINAI-${slug.replace(/-/g, "").toUpperCase().slice(0, 16)}-${randHex(4)}`;
@@ -114,10 +114,10 @@ async function buy(request, env, slug) {
     data = await r.json().catch(() => null);
     const checkout = data && data.data && data.data.checkout_url;
     if (!r.ok || !data || data.success !== true || typeof checkout !== "string") {
-      return j(502, { ok: false, error: "gateway pembayaran tidak merespons" });
+      return j(502, { ok: false, error: "payment gateway did not respond" });
     }
   } catch {
-    return j(502, { ok: false, error: "tidak bisa menghubungi gateway pembayaran" });
+    return j(502, { ok: false, error: "cannot reach payment gateway" });
   }
 
   const inv = data.data;
@@ -137,7 +137,7 @@ async function webhook(request, env) {
   const sig = (request.headers.get("x-autopay-signature") || "").toLowerCase();
   const deliveryId = request.headers.get("x-autopay-delivery-id") || "";
   if (!env.AUTOPAY_API_KEY || !ts || !sig) return j(401, { ok: false, error: "unauthorized" });
-  // Tolak timestamp basi (>10 menit) — anti replay lama.
+  // Reject stale timestamps (>10 min) — anti old-replay.
   if (Math.abs(Date.now() / 1000 - Number(ts)) > 600) return j(401, { ok: false, error: "stale" });
   const expected = await hmacHex(env.AUTOPAY_API_KEY, `${ts}.${raw}`);
   if (!timingEq(expected, sig)) return j(401, { ok: false, error: "bad signature" });
@@ -147,7 +147,7 @@ async function webhook(request, env) {
   const event = request.headers.get("x-autopay-event") || p.event || "payment.paid";
   const ref = p.ref_id || p.reference_id || "";
 
-  // Dedup delivery — retry autopay (1+3 attempt) idempotent di sini.
+  // Dedup delivery — autopay retries (1+3 attempts) are idempotent here.
   if (deliveryId) {
     const ins = await env.DB.prepare("INSERT OR IGNORE INTO webhook_log (delivery_id,ref_id,event) VALUES (?,?,?)")
       .bind(deliveryId, ref, event).run();
@@ -158,7 +158,7 @@ async function webhook(request, env) {
   if (!ref) return j(200, { ok: true, warn: "no ref" });
 
   const order = await env.DB.prepare("SELECT * FROM orders WHERE ref_id=?").bind(ref).first();
-  if (!order) return j(200, { ok: true, warn: "ref tidak dikenal" });
+  if (!order) return j(200, { ok: true, warn: "unknown ref" });
   if (order.status === "paid") return j(200, { ok: true, already: true });
   if (Number(p.amount) !== Number(order.payable)) {
     return j(200, { ok: false, error: `amount mismatch ${p.amount} vs ${order.payable}` });
@@ -180,8 +180,8 @@ async function register(request, env) {
   const b = await jsonBody(request);
   const email = b && typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
   const pass = b && typeof b.password === "string" ? b.password : "";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return j(400, { ok: false, error: "email tidak valid" });
-  if (pass.length < 8) return j(400, { ok: false, error: "password minimal 8 karakter" });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return j(400, { ok: false, error: "invalid email" });
+  if (pass.length < 8) return j(400, { ok: false, error: "password must be at least 8 characters" });
 
   const salt = randHex(8);
   const hash = await pbkdf2(pass, salt);
@@ -194,8 +194,8 @@ async function register(request, env) {
       .bind(token, uid).run();
     return new Response(JSON.stringify({ ok: true, email }), { status: 200, headers: { ...HDR, "set-cookie": cookieSet("alfin_sid", token, 2592000) } });
   } catch (e) {
-    if (String(e).includes("UNIQUE")) return j(409, { ok: false, error: "email sudah terdaftar — coba masuk" });
-    return j(500, { ok: false, error: "register gagal" });
+    if (String(e).includes("UNIQUE")) return j(409, { ok: false, error: "email already registered — try logging in" });
+    return j(500, { ok: false, error: "registration failed" });
   }
 }
 
@@ -205,11 +205,11 @@ async function login(request, env) {
   const email = b && typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
   const pass = b && typeof b.password === "string" ? b.password : "";
   const u = await env.DB.prepare("SELECT id,pass_hash FROM users WHERE email=?").bind(email).first();
-  if (!u) return j(401, { ok: false, error: "email atau password salah" });
+  if (!u) return j(401, { ok: false, error: "wrong email or password" });
   const m = u.pass_hash.match(/^pbkdf2\$(\d+)\$([0-9A-Fa-f]+)\$([0-9A-Fa-f]+)$/);
-  if (!m) return j(401, { ok: false, error: "email atau password salah" });
+  if (!m) return j(401, { ok: false, error: "wrong email or password" });
   const calc = await pbkdf2(pass, m[2], Number(m[1]));
-  if (!timingEq(calc, m[3])) return j(401, { ok: false, error: "email atau password salah" });
+  if (!timingEq(calc, m[3])) return j(401, { ok: false, error: "wrong email or password" });
 
   const token = randHex(16);
   await env.DB.prepare("INSERT INTO sessions (token,user_id,admin,expires_at) VALUES (?,?,0,datetime('now','+30 days'))")
@@ -258,7 +258,7 @@ async function adminLogin(request, env) {
   if (!isJson(request)) return j(400, { ok: false, error: "json only" });
   const b = await jsonBody(request);
   const pass = b && typeof b.password === "string" ? b.password : "";
-  if (!env.ADMIN_PASSWORD || !timingEq(pass, env.ADMIN_PASSWORD)) return j(401, { ok: false, error: "password salah" });
+  if (!env.ADMIN_PASSWORD || !timingEq(pass, env.ADMIN_PASSWORD)) return j(401, { ok: false, error: "wrong password" });
   const token = randHex(16);
   await env.DB.prepare("INSERT INTO sessions (token,user_id,admin,expires_at) VALUES (?,NULL,1,datetime('now','+12 hours'))")
     .bind(token).run();
@@ -285,7 +285,7 @@ async function adminProducts(request, env) {
     const category = String(b.category || "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 24);
     let data = "";
     if (typeof b.data === "string" && b.data.length <= 20000) {
-      try { data = JSON.stringify(JSON.parse(b.data)); } catch { return j(400, { ok: false, error: "data bukan JSON valid" }); }
+      try { data = JSON.stringify(JSON.parse(b.data)); } catch { return j(400, { ok: false, error: "data is not valid JSON" }); }
     }
     await env.DB.prepare(
       `INSERT INTO products (slug,kind,name,"desc",price,billing,access,url,category,data,sort,active)
@@ -329,9 +329,9 @@ async function adminEntitlements(request, env) {
     const email = b && typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
     const slug = String(b && b.product_slug || "");
     const u = await env.DB.prepare("SELECT id FROM users WHERE email=?").bind(email).first();
-    if (!u) return j(404, { ok: false, error: "user belum terdaftar" });
+    if (!u) return j(404, { ok: false, error: "user not registered" });
     const p = await env.DB.prepare("SELECT slug FROM products WHERE slug=?").bind(slug).first();
-    if (!p) return j(404, { ok: false, error: "produk tidak ada" });
+    if (!p) return j(404, { ok: false, error: "product not found" });
     const ends = b.ends_at && /^\d{4}-\d{2}-\d{2}/.test(b.ends_at) ? `'${b.ends_at.slice(0, 10)}'` : "NULL";
     await env.DB.prepare(
       `INSERT OR IGNORE INTO entitlements (user_id,product_slug,ref_id,source,ends_at) VALUES (?,?,?,'manual',${ends})`
@@ -397,7 +397,7 @@ export default {
         return j(404, { ok: false, error: "not found" });
       }
 
-      // Static assets + 404 manual (not_found_handling tak berlaku via binding).
+      // Static assets + manual 404 (not_found_handling doesn't apply via binding).
       let resp;
       try {
         resp = await env.ASSETS.fetch(request);

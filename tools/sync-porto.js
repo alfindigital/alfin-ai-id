@@ -1,7 +1,7 @@
-// Sync link sections dari porto.alfindigital.com (single source of truth).
-// Rewrite blok antara <!-- LINKS:START --> dan <!-- LINKS:END --> di index.html.
-// Tiap lrow: lname (link utama) + lnote (deskripsi) + .gh opsional (repo open source).
-// Link yang juga ada di footer sosial diskip (sudah di-cover icon).
+// Sync link sections from porto.alfindigital.com (single source of truth).
+// Rewrites the block between <!-- LINKS:START --> and <!-- LINKS:END --> in index.html.
+// Each lrow: lname (main link) + lnote (description) + optional .gh (open-source repo).
+// Links also present in the social footer are skipped (already covered by icons).
 const fs = require("fs");
 const path = require("path");
 
@@ -21,7 +21,7 @@ const unesc = (s) => s.replace(/&amp;/g, "&").replace(/&#39;|&#x27;/g, "'").repl
 const esc = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
-// Slot icon konsisten: Telegram / GitHub / globe untuk link web biasa.
+// Consistent slot icon: Telegram / GitHub / globe for plain web links.
 const slotFor = (url) => {
   const icon = url.includes("t.me/")
     ? "i-tg"
@@ -52,7 +52,7 @@ async function main() {
     return r.text();
   });
 
-  // Pecah per kategori: <h2 class="kicker">nama</h2> ... sampai kicker berikutnya
+  // Split per category: <h2 class="kicker">name</h2> ... until the next kicker
   const parts = html.split(/<h2 class="kicker">/i).slice(1);
   const groups = [];
   let oss = 0;
@@ -74,10 +74,10 @@ async function main() {
     }
     if (links.length) groups.push({ name, links });
   }
-  if (!groups.length) throw new Error("nol kategori ter-parse — cek markup porto");
+  if (!groups.length) throw new Error("zero categories parsed — check porto markup");
 
   const nav =
-    `  <nav class="jumpnav in in-2" aria-label="Kategori">\n    ` +
+    `  <nav class="jumpnav in in-2" aria-label="Categories">\n    ` +
     groups.map((g) => `<a href="#${slugFor(g.name)}"><span class="sl">//</span>${esc(g.name)}</a>`).join("\n    ") +
     `\n  </nav>\n\n`;
 
@@ -97,22 +97,22 @@ async function main() {
 
   const src = fs.readFileSync(INDEX, "utf8");
   if (!/<!-- LINKS:START -->[\s\S]*?<!-- LINKS:END -->/.test(src))
-    throw new Error("marker LINKS tidak ketemu di index.html");
+    throw new Error("LINKS markers not found in index.html");
   const out = src.replace(
     /<!-- LINKS:START -->[\s\S]*?<!-- LINKS:END -->/,
     `<!-- LINKS:START -->\n${blocks}\n  <!-- LINKS:END -->`,
   );
   const total = groups.reduce((n, g) => n + g.links.length, 0);
   if (out === src) {
-    console.log(`sudah sinkron: ${groups.length} section, ${total} link`);
+    console.log(`already in sync: ${groups.length} sections, ${total} links`);
     return;
   }
   fs.writeFileSync(INDEX, out);
-  console.log(`synced: ${groups.length} section, ${total} link, ${oss} open-source`);
+  console.log(`synced: ${groups.length} sections, ${total} links, ${oss} open-source`);
   groups.forEach((g) => console.log(`  // ${g.name}: ${g.links.length}`));
 }
 
 main().catch((e) => {
-  console.error("SYNC GAGAL:", e.message);
+  console.error("SYNC FAILED:", e.message);
   process.exit(1);
 });

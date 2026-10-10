@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="id" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Alfin · alfin.ai.id</title>
-<meta name="description" content="Alfin bikin tools, bot, dan otomasi yang dipakai tiap hari.">
+<meta name="description" content="Alfin builds tools, bots &amp; automation used every day.">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0d0f">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f3f1">
 <meta property="og:title" content="Alfin Assyidiq">
-<meta property="og:description" content="Tools, bot &amp; otomasi buat kerja harian.">
+<meta property="og:description" content="Tools, bots &amp; automation for daily work.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://alfin.ai.id">
 <meta property="og:image" content="https://alfin.ai.id/og.png">
@@ -21,8 +21,8 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://alfin.ai.id/">
 <meta property="og:site_name" content="alfin.ai.id">
-<meta property="og:locale" content="id_ID">
-<meta name="twitter:description" content="Tools, bot &amp; otomasi buat kerja harian.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:description" content="Tools, bots &amp; automation for daily work.">
 <link rel="preload" href="/fonts/instrumentsans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/orbitron.woff2" as="font" type="font/woff2" crossorigin>
 <script src="/theme.js"></script>
@@ -70,7 +70,7 @@ svg{display:block}
 .ic-fill{fill:currentColor}
 .ic-stroke{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* dot-grid: tekstur techy samar, menjaga halaman tidak polos */
+/* dot-grid: faint techy texture so the page doesn't feel empty */
 body::before{
   content:"";
   position:fixed;
@@ -81,7 +81,7 @@ body::before{
   z-index:0;
 }
 
-/* corner ticks: motif HUD di 4 sudut viewport */
+/* corner ticks: HUD motif on all 4 viewport corners */
 .ticks i{
   position:fixed;
   width:14px;height:14px;
@@ -111,12 +111,25 @@ header{
   padding-bottom:2rem;
 }
 .brand{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
   font-family:"Orbitron",sans-serif;
   font-weight:800;
   font-size:.85rem;
   color:var(--ink);
   text-decoration:none;
   letter-spacing:.1em;
+}
+.b-mark{width:26px;height:26px;border-radius:7px;display:block}
+.brand em{
+  font-style:normal;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-weight:700;
+  font-size:.78em;
+  letter-spacing:.06em;
+  color:var(--accent);
+  margin-left:.12em;
 }
 .cursor{
   display:inline-block;
@@ -147,6 +160,63 @@ header .tools{display:flex;align-items:center}
 .icon-btn:hover{color:var(--accent)}
 .icon-btn .ic{width:1.2rem;height:1.2rem}
 .icon-btn[hidden]{display:none}
+.menu{position:relative}
+.menu>summary{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:44px;
+  min-height:44px;
+  color:var(--ink-2);
+  list-style:none;
+  cursor:pointer;
+  border-radius:8px;
+  transition:color .18s ease;
+}
+.menu>summary::-webkit-details-marker{display:none}
+.menu>summary:hover,.menu[open]>summary{color:var(--accent)}
+.menu>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.menu .ic{width:1.2rem;height:1.2rem}
+.menu-list{
+  position:absolute;
+  top:calc(100% + .45rem);
+  right:0;
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  min-width:9.5rem;
+  padding:.3rem;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:10px;
+  box-shadow:0 16px 40px -18px rgba(0,0,0,.55);
+}
+.menu-list a{
+  display:flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 .65rem;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-weight:700;
+  font-size:.76rem;
+  letter-spacing:.06em;
+  color:var(--ink);
+  text-decoration:none;
+  border-radius:6px;
+  white-space:nowrap;
+}
+.menu-list a .sl{color:var(--accent)}
+.menu-list a:hover{color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.menu-list a.dim{
+  color:var(--ink-2);
+  margin-top:.2rem;
+  padding-top:.45rem;
+  border-top:1px solid var(--line);
+  border-radius:0 0 6px 6px;
+}
+.menu-list a[aria-current]{color:var(--accent)}
+.menu[open] .menu-list{animation:menuin .14s ease-out}
+@keyframes menuin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 [data-theme="dark"] .i-moon{display:none}
 [data-theme="light"] .i-sun{display:none}
 
@@ -158,8 +228,8 @@ html{scroll-behavior:smooth}
   z-index:5;
   display:flex;
   flex-wrap:wrap;
-  gap:.1rem .9rem;
-  padding:.4rem 0;
+  gap:.4rem .5rem;
+  padding:.55rem 0;
   margin-bottom:1.5rem;
   background:var(--bg);
   border-bottom:1px solid var(--line);
@@ -168,17 +238,29 @@ html{scroll-behavior:smooth}
 .jumpnav a{
   display:flex;
   align-items:center;
-  min-height:44px;
+  min-height:40px;
+  padding:0 .7rem;
   font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.72rem;
+  font-weight:700;
+  font-size:.74rem;
   letter-spacing:.06em;
-  color:var(--ink-2);
+  color:var(--ink);
   text-decoration:none;
   white-space:nowrap;
-  transition:color .18s ease;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  transition:color .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;
 }
 .jumpnav a .sl{color:var(--accent)}
-.jumpnav a:hover{color:var(--accent)}
+.jumpnav a:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px -14px color-mix(in srgb,var(--accent) 60%,transparent);
+}
+.jumpnav a:active{transform:translateY(-2px) scale(.98)}
+.jumpnav a[aria-current]{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
 @media(max-width:33.9rem){
   .jumpnav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
   .jumpnav::-webkit-scrollbar{display:none}
@@ -265,7 +347,7 @@ section{margin-bottom:1.9rem;scroll-margin-top:3.6rem}
 }
 .links a:hover .arr{transform:translate(2px,-2px)}
 
-/* produk berbayar: tile kartu sama rupa .links a tapi non-link + tombol bayar */
+/* paid products: same tile look as .links a but non-link + pay button */
 .prodgrid .prod{
   display:flex;
   flex-direction:column;
@@ -340,22 +422,33 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
 <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
 <symbol id="i-web" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
 </defs></svg>
 <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <main>
   <header class="in in-1">
-    <a class="brand" href="/">ALFIN.AI.ID<span class="cursor" aria-hidden="true"></span></a>
+    <a class="brand" href="/" aria-label="alfin.ai.id — home"><img class="b-mark" src="/favicon.svg" alt="" width="26" height="26"><span>ALFIN<em>.AI.ID</em></span><span class="cursor" aria-hidden="true"></span></a>
     <div class="tools">
       <a class="icon-btn" href="https://github.com/alfindigital" target="_blank" rel="noopener" aria-label="GitHub"><svg class="ic"><use href="#i-gh"/></svg></a>
-      <button class="icon-btn" id="themeBtn" type="button" aria-label="Ganti tema" hidden>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle theme" hidden>
         <svg class="ic i-sun"><use href="#i-sun"/></svg>
         <svg class="ic i-moon"><use href="#i-moon"/></svg>
       </button>
+      <details class="menu">
+        <summary aria-label="Site menu"><svg class="ic"><use href="#i-menu"/></svg></summary>
+        <nav class="menu-list" aria-label="Site map">
+          <a href="/" aria-current="page"><span class="sl">//</span>index</a>
+          <a href="/gear"><span class="sl">//</span>gear</a>
+          <a href="/device"><span class="sl">//</span>device</a>
+          <a href="/member"><span class="sl">//</span>member</a>
+          <a class="dim" href="/admin"><span class="sl">//</span>admin</a>
+        </nav>
+      </details>
     </div>
   </header>
 
   <!-- LINKS:START -->
-  <nav class="jumpnav in in-2" aria-label="Kategori">
+  <nav class="jumpnav in in-2" aria-label="Categories">
     <a href="#app"><span class="sl">//</span>app</a>
     <a href="#idx"><span class="sl">//</span>idx</a>
     <a href="#idx-bot"><span class="sl">//</span>idx bot</a>
@@ -454,11 +547,11 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
   </section>
   <!-- LINKS:END -->
 
-  <section class="in in-10" id="berbayar">
-    <h2 class="tag">// berbayar</h2>
+  <section class="in in-10" id="paid">
+    <h2 class="tag">// paid</h2>
     <ul class="links prodgrid" data-products="paid"></ul>
-    <noscript><p class="note">produk berbayar butuh JavaScript — aktifkan lalu refresh.</p></noscript>
-    <p class="note">bayar via autopay — QRIS dinamis + kode unik, verifikasi otomatis. tools → <a href="/gear">//gear</a> · setup → <a href="/device">//device</a> · akun → <a href="/member">//member</a></p>
+    <noscript><p class="note">paid products need JavaScript — enable it, then refresh.</p></noscript>
+    <p class="note">pay via autopay — dynamic QRIS + unique code, auto-verified. tools → <a href="/gear">//gear</a> · setup → <a href="/device">//device</a> · account → <a href="/member">//member</a></p>
   </section>
 
   <footer class="in in-10">

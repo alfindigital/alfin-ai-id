@@ -1,6 +1,6 @@
-// Auto-sync mingguan (dijalankan Task Scheduler):
-// sync porto -> kalau index.html berubah -> build + deploy + commit + push.
-// Kalau tidak ada drift, cuma log "no drift". Log: sync.log (gitignored).
+// Weekly auto-sync (run by Task Scheduler):
+// sync porto -> if index.html changed -> build + deploy + commit + push.
+// If there's no drift, just log "no drift". Log: sync.log (gitignored).
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
@@ -25,12 +25,12 @@ try {
     process.exit(0);
   }
 
-  log(`drift terdeteksi (${syncOut}) — deploying`);
+  log(`drift detected (${syncOut}) — deploying`);
   run("node tools/build-dist.js");
   run("npx wrangler deploy");
-  log("deploy ok — verifikasi produksi");
+  log("deploy ok — verifying production");
   run("node tools/verify.js");
-  run('git add index.html && git commit -m "chore: auto-sync dari porto (scheduled)" && git push');
+  run('git add index.html && git commit -m "chore: auto-sync from porto (scheduled)" && git push');
   log("deployed + committed");
 } catch (e) {
   log(`ERROR: ${e.message}`);

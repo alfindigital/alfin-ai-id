@@ -1,4 +1,4 @@
-// Build dist/ — whitelist file publik. File yang tidak terdaftar TIDAK dideploy.
+// Build dist/ — public file whitelist. Unlisted files are NOT deployed.
 const fs = require("fs");
 const path = require("path");
 
@@ -22,7 +22,7 @@ const PUBLIC_FILES = [
   "apple-touch-icon.png",
 ];
 
-// fonts/: hanya woff2 yang dideploy (ttf dipakai build-time utk render og.png)
+// fonts/: only woff2 is deployed (ttf is used build-time to render og.png)
 const PUBLIC_DIRS = [
   { dir: "fonts", exts: [".woff2"] },
   { dir: "img/device", exts: [".webp", ".jpg", ".jpeg", ".png", ".avif"] },
@@ -59,4 +59,4 @@ for (const { dir, exts } of PUBLIC_DIRS) {
     }
   }
 }
-console.log(`\ndist siap: ${count} file`);
+console.log(`\ndist ready: ${count} files`);

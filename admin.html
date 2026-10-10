@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,11 +30,29 @@ body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(
 .ticks i:nth-child(4){bottom:calc(12px + env(safe-area-inset-bottom));right:calc(12px + env(safe-area-inset-right));border-left:0;border-top:0}
 main{position:relative;z-index:1;width:100%;max-width:64rem;padding:clamp(1.25rem,4vw,2.25rem) clamp(1.1rem,4vw,2.5rem) 2.5rem;display:flex;flex-direction:column;min-height:100dvh}
 header{display:flex;justify-content:space-between;align-items:center;padding-bottom:1.4rem}
-.brand{font-family:"Orbitron",sans-serif;font-weight:800;font-size:.85rem;color:var(--ink);text-decoration:none;letter-spacing:.1em}
+header .tools{display:flex;align-items:center}
+.brand{display:flex;align-items:center;gap:.55rem;font-family:"Orbitron",sans-serif;font-weight:800;font-size:.85rem;color:var(--ink);text-decoration:none;letter-spacing:.1em}
+.b-mark{width:26px;height:26px;border-radius:7px;display:block}
+.brand em{font-style:normal;font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.78em;letter-spacing:.06em;color:var(--accent);margin-left:.12em}
+.b-tag{font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:400;font-size:.72em;letter-spacing:.05em;color:var(--ink-2)}
 .icon-btn{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0;background:none;border:0;color:var(--ink-2);text-decoration:none;cursor:pointer}
 .icon-btn:hover{color:var(--accent)}
 .icon-btn .ic{width:1.2rem;height:1.2rem}
 .icon-btn[hidden]{display:none}
+.menu{position:relative}
+.menu>summary{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;color:var(--ink-2);list-style:none;cursor:pointer;border-radius:8px;transition:color .18s ease}
+.menu>summary::-webkit-details-marker{display:none}
+.menu>summary:hover,.menu[open]>summary{color:var(--accent)}
+.menu>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.menu .ic{width:1.2rem;height:1.2rem}
+.menu-list{position:absolute;top:calc(100% + .45rem);right:0;z-index:20;display:flex;flex-direction:column;min-width:9.5rem;padding:.3rem;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 16px 40px -18px rgba(0,0,0,.55)}
+.menu-list a{display:flex;align-items:center;min-height:34px;padding:0 .65rem;font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.76rem;letter-spacing:.06em;color:var(--ink);text-decoration:none;border-radius:6px;white-space:nowrap}
+.menu-list a .sl{color:var(--accent)}
+.menu-list a:hover{color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.menu-list a.dim{color:var(--ink-2);margin-top:.2rem;padding-top:.45rem;border-top:1px solid var(--line);border-radius:0 0 6px 6px}
+.menu-list a[aria-current]{color:var(--accent)}
+.menu[open] .menu-list{animation:menuin .14s ease-out}
+@keyframes menuin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 [data-theme="dark"] .i-moon{display:none}
 [data-theme="light"] .i-sun{display:none}
 .tag{font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.82rem;color:var(--accent);letter-spacing:.08em;margin-bottom:.65rem}
@@ -70,15 +88,28 @@ footer{margin-top:auto;border-top:1px solid var(--line);padding-top:1rem;text-al
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
 </defs></svg>
 <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <main>
   <header>
-    <a class="brand" href="/">ALFIN.AI.ID // admin</a>
-    <button class="icon-btn" id="themeBtn" type="button" aria-label="Ganti tema" hidden>
-      <svg class="ic i-sun"><use href="#i-sun"/></svg>
-      <svg class="ic i-moon"><use href="#i-moon"/></svg>
-    </button>
+    <a class="brand" href="/"><img class="b-mark" src="/favicon.svg" alt="" width="26" height="26"><span>ALFIN<em>.AI.ID</em></span><span class="b-tag">// admin</span></a>
+    <div class="tools">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle theme" hidden>
+        <svg class="ic i-sun"><use href="#i-sun"/></svg>
+        <svg class="ic i-moon"><use href="#i-moon"/></svg>
+      </button>
+      <details class="menu">
+        <summary aria-label="Site menu"><svg class="ic"><use href="#i-menu"/></svg></summary>
+        <nav class="menu-list" aria-label="Site map">
+          <a href="/"><span class="sl">//</span>index</a>
+          <a href="/gear"><span class="sl">//</span>gear</a>
+          <a href="/device"><span class="sl">//</span>device</a>
+          <a href="/member"><span class="sl">//</span>member</a>
+          <a class="dim" href="/admin" aria-current="page"><span class="sl">//</span>admin</a>
+        </nav>
+      </details>
+    </div>
   </header>
 
   <div class="card" id="gate" hidden>
@@ -86,7 +117,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);padding-top:1rem;text-al
     <form id="form-admin">
       <label for="a-pass">password</label>
       <input id="a-pass" type="password" required autocomplete="current-password">
-      <button class="btn" type="submit" style="margin-top:.6rem">masuk →</button>
+      <button class="btn" type="submit" style="margin-top:.6rem">login →</button>
       <p class="msg" id="a-msg" role="status"></p>
     </form>
   </div>
@@ -94,52 +125,52 @@ footer{margin-top:auto;border-top:1px solid var(--line);padding-top:1rem;text-al
   <div id="panel" hidden>
     <div class="row-between" style="margin-bottom:1rem">
       <h2 class="tag" style="margin:0">// admin panel</h2>
-      <button class="btn" id="btn-alo" type="button">keluar →</button>
+      <button class="btn" id="btn-alo" type="button">logout →</button>
     </div>
 
     <div class="card">
-      <h2 class="tag">produk <span class="muted">(paid + gear — sinkron ke / &amp; /gear)</span></h2>
+      <h2 class="tag">products <span class="muted">(paid + gear — synced to / &amp; /gear)</span></h2>
       <table id="tbl-prod"><thead><tr>
-        <th>slug</th><th>kind</th><th>nama / desc</th><th>harga</th><th>billing</th><th>access</th><th>kategori</th><th>url</th><th>sort</th><th>on</th><th></th>
+        <th>slug</th><th>kind</th><th>name / desc</th><th>price</th><th>billing</th><th>access</th><th>category</th><th>url</th><th>sort</th><th>on</th><th></th>
       </tr></thead><tbody></tbody></table>
       <details style="margin-top:.8rem">
-        <summary class="muted" style="cursor:pointer">+ produk / gear baru</summary>
+        <summary class="muted" style="cursor:pointer">+ new product / gear</summary>
         <div class="grid2" style="margin-top:.7rem">
-          <div><label>slug</label><input id="np-slug" placeholder="nama-slug"></div>
+          <div><label>slug</label><input id="np-slug" placeholder="name-slug"></div>
           <div><label>kind</label><select id="np-kind"><option>paid</option><option>gear</option><option>device</option></select></div>
-          <div><label>nama</label><input id="np-name"></div>
+          <div><label>name</label><input id="np-name"></div>
           <div style="grid-column:1/-1"><label>desc</label><input id="np-desc"></div>
-          <div><label>harga (rp)</label><input id="np-price" type="number" min="0"></div>
+          <div><label>price (rp)</label><input id="np-price" type="number" min="0"></div>
           <div><label>billing</label><select id="np-billing"><option value=""></option><option>yearly</option><option>lifetime</option></select></div>
           <div><label>access</label><select id="np-access"><option>public</option><option>member</option></select></div>
-          <div><label>kategori (utk gear)</label><input id="np-cat" placeholder="video / pages / …"></div>
-          <div style="grid-column:1/-1"><label>url (utk gear)</label><input id="np-url" placeholder="https://…"></div>
-          <div style="grid-column:1/-1"><label>data json (utk device)</label><input id="np-data" placeholder='{"tags":[…],"links":{…},"images":[…]}'></div>
+          <div><label>category (for gear)</label><input id="np-cat" placeholder="video / pages / …"></div>
+          <div style="grid-column:1/-1"><label>url (for gear)</label><input id="np-url" placeholder="https://…"></div>
+          <div style="grid-column:1/-1"><label>data json (for device)</label><input id="np-data" placeholder='{"tags":[…],"links":{…},"images":[…]}'></div>
         </div>
-        <button class="btn" id="np-add" type="button" style="margin-top:.6rem">tambah →</button>
+        <button class="btn" id="np-add" type="button" style="margin-top:.6rem">add →</button>
         <p class="msg" id="np-msg"></p>
       </details>
     </div>
 
     <div class="card">
       <h2 class="tag">orders</h2>
-      <table id="tbl-ord"><thead><tr><th>ref</th><th>produk</th><th>email</th><th>nominal</th><th>status</th><th>dibuat</th><th>paid</th></tr></thead><tbody></tbody></table>
+      <table id="tbl-ord"><thead><tr><th>ref</th><th>product</th><th>email</th><th>amount</th><th>status</th><th>created</th><th>paid</th></tr></thead><tbody></tbody></table>
     </div>
 
     <div class="card">
       <h2 class="tag">entitlements</h2>
-      <table id="tbl-ent"><thead><tr><th>email</th><th>produk</th><th>s/d</th><th>source</th><th>ref</th></tr></thead><tbody></tbody></table>
+      <table id="tbl-ent"><thead><tr><th>email</th><th>product</th><th>until</th><th>source</th><th>ref</th></tr></thead><tbody></tbody></table>
       <form id="form-grant" class="grid2" style="margin-top:.8rem">
-        <div><label>email user</label><input id="g-email" required></div>
-        <div><label>produk</label><select id="g-slug"></select></div>
-        <div><label>s/d (kosong = lifetime)</label><input id="g-ends" type="date"></div>
+        <div><label>user email</label><input id="g-email" required></div>
+        <div><label>product</label><select id="g-slug"></select></div>
+        <div><label>until (empty = lifetime)</label><input id="g-ends" type="date"></div>
         <div style="grid-column:1/-1"><button class="btn" type="submit">grant manual →</button><span class="msg" id="g-msg" style="display:inline-block;margin-left:.6rem"></span></div>
       </form>
     </div>
 
     <div class="card">
       <h2 class="tag">users</h2>
-      <table id="tbl-usr"><thead><tr><th>email</th><th>terdaftar</th><th>grants</th><th>orders</th></tr></thead><tbody></tbody></table>
+      <table id="tbl-usr"><thead><tr><th>email</th><th>joined</th><th>grants</th><th>orders</th></tr></thead><tbody></tbody></table>
     </div>
   </div>
 

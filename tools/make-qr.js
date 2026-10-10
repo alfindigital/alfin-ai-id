@@ -1,5 +1,5 @@
-// Generate qr.svg — QR menuju https://alfin.ai.id (modul hitam, bg transparan;
-// chip putih di CSS footer yang jaga kontras). Jalankan: node tools/make-qr.js
+// Generate qr.svg — QR pointing to https://alfin.ai.id (black modules,
+// transparent bg; the footer's white chip keeps contrast). Run: node tools/make-qr.js
 const QRCode = require("qrcode");
 const path = require("path");
 const fs = require("fs");
@@ -12,5 +12,5 @@ QRCode.toString("https://alfin.ai.id", {
 }).then((svg) => {
   const out = path.join(__dirname, "..", "qr.svg");
   fs.writeFileSync(out, svg);
-  console.log(`qr.svg ditulis (${(svg.length / 1024).toFixed(1)} KB)`);
+  console.log(`qr.svg written (${(svg.length / 1024).toFixed(1)} KB)`);
 });

@@ -1,4 +1,4 @@
-// Member area: masuk/daftar -> dashboard produk + order.
+// Member area: login/register -> product + order dashboard.
 (() => {
   const $ = (id) => document.getElementById(id);
   const api = (p, method, body) =>
@@ -10,7 +10,7 @@
   const esc = (s) =>
     String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmt = (iso) => (iso ? String(iso).slice(0, 10) : "lifetime");
-  const rp = (n) => "Rp" + Number(n).toLocaleString("id-ID");
+  const rp = (n) => "Rp" + Number(n).toLocaleString("en-US");
   const next = new URLSearchParams(location.search).get("next") || "";
 
   function setMsg(id, txt, ok) {
@@ -36,7 +36,7 @@
     document.querySelector("#tbl-ent tbody").innerHTML = et
       .map(
         (e) =>
-          `<tr><td><b>${esc(e.name || e.product_slug)}</b></td><td>s/d ${esc(fmt(e.ends_at))}</td><td>${esc(e.source)}</td></tr>`
+          `<tr><td><b>${esc(e.name || e.product_slug)}</b></td><td>until ${esc(fmt(e.ends_at))}</td><td>${esc(e.source)}</td></tr>`
       )
       .join("");
 
@@ -48,7 +48,7 @@
         (o) =>
           `<tr><td>${esc(o.ref_id)}</td><td><b>${esc(o.name || o.product_slug)}</b></td><td>${rp(o.payable)}</td>` +
           `<td><span class="pill ${o.status === "paid" ? "paid" : "pending"}">${esc(o.status)}</span></td>` +
-          `<td>${o.status === "pending" ? `<a href="${esc(o.checkout_url)}" rel="noopener">bayar ↗</a>` : ""}</td></tr>`
+          `<td>${o.status === "pending" ? `<a href="${esc(o.checkout_url)}" rel="noopener">pay ↗</a>` : ""}</td></tr>`
       )
       .join("");
     return true;
@@ -63,12 +63,12 @@
       try {
         const d = await api(path, "POST", getBody());
         if (d.ok) {
-          setMsg(msgId, "ok — memuat akun…", true);
+          setMsg(msgId, "ok — loading account…", true);
           if (next) location.assign(next);
           else showDash();
-        } else setMsg(msgId, d.error || "gagal", false);
+        } else setMsg(msgId, d.error || "failed", false);
       } catch {
-        setMsg(msgId, "tidak bisa terhubung", false);
+        setMsg(msgId, "connection failed", false);
       }
       btn.disabled = false;
     });

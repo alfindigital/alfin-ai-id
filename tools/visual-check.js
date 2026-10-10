@@ -1,6 +1,6 @@
-// Visual regression check — pakai playwright-core + Chrome sistem (tanpa
-// download browser). Screenshot ke shots/ (gitignored) + assert layout.
-// Jalankan: npm run test:visual
+// Visual regression check — uses playwright-core + system Chrome (no browser
+// download). Screenshots go to shots/ (gitignored) + layout assertions.
+// Run: npm run test:visual
 const { chromium } = require("playwright-core");
 const fs = require("fs");
 const path = require("path");
@@ -37,13 +37,13 @@ async function main() {
     const overflow = m.scrollW > m.innerW;
     const okCols = m.cols === c.expectCols;
     console.log(
-      `${okCols && !overflow ? "ok  " : "FAIL"} ${c.name} ${c.width}px → ${m.cols} kolom${overflow ? " + OVERFLOW" : ""}`,
+      `${okCols && !overflow ? "ok  " : "FAIL"} ${c.name} ${c.width}px → ${m.cols} columns${overflow ? " + OVERFLOW" : ""}`,
     );
     if (!okCols || overflow) fail++;
     await page.screenshot({ path: path.join(shots, `${c.name}.png`), fullPage: true });
   }
 
-  // toggle tema flip + persist
+  // theme toggle flip + persist
   await page.setViewportSize({ width: 1280, height: 900 });
   const t = await page.evaluate(() => {
     const before = document.documentElement.dataset.theme;
@@ -56,11 +56,11 @@ async function main() {
   await page.screenshot({ path: path.join(shots, "desktop-alt-theme.png"), fullPage: true });
 
   const realErrors = errors.filter((e) => !e.includes("cloudflareinsights"));
-  console.log(realErrors.length ? `FAIL console errors:\n${realErrors.join("\n")}` : "ok  console bersih");
+  console.log(realErrors.length ? `FAIL console errors:\n${realErrors.join("\n")}` : "ok  clean console");
   if (realErrors.length) fail++;
 
   await browser.close();
-  console.log(fail === 0 ? "\nSEMUA HIJAU" : `\n${fail} GAGAL`);
+  console.log(fail === 0 ? "\nALL GREEN" : `\n${fail} FAILED`);
   process.exit(fail ? 1 : 0);
 }
 

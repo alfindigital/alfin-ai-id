@@ -1,7 +1,7 @@
-// Render grid produk/gear dari /api/products (satu sumber data — selalu sinkron
-// di semua halaman) + handler tombol "bayar" (member -> login dulu).
+// Render product/gear grids from /api/products (single data source — always in
+// sync across pages) + "pay" button handler (member -> login first).
 (() => {
-  const rp = (n) => "Rp" + Number(n).toLocaleString("id-ID");
+  const rp = (n) => "Rp" + Number(n).toLocaleString("en-US");
   const esc = (s) =>
     String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -22,7 +22,7 @@
               ? `<a class="pic" href="${esc(main || imgs[0])}" target="_blank" rel="noopener"><img src="${esc(imgs[0])}" alt="${esc(p.name)}" loading="lazy" decoding="async"></a>`
               : "";
             const thumbs = imgs.length > 1
-              ? `<span class="thumbs">${imgs.map((u, i) => `<button class="th${i ? "" : " on"}" type="button" data-swap="${esc(u)}" aria-label="foto ${i + 1}"><img src="${esc(u)}" alt="" loading="lazy" decoding="async"></button>`).join("")}</span>`
+              ? `<span class="thumbs">${imgs.map((u, i) => `<button class="th${i ? "" : " on"}" type="button" data-swap="${esc(u)}" aria-label="photo ${i + 1}"><img src="${esc(u)}" alt="" loading="lazy" decoding="async"></button>`).join("")}</span>`
               : "";
             const tags = (Array.isArray(d.tags) ? d.tags : []).map((t) => `<i>${esc(t)}</i>`).join("");
             const ctas = [["shopee", "shopee"], ["tokopedia", "tokopedia"]]
@@ -33,9 +33,9 @@
           if (kind === "gear") {
             return `<li><a href="${esc(p.url)}" target="_blank" rel="noopener"><span class="slot"><svg class="ic"><use href="#i-web"/></svg></span><span class="meta"><span class="arr">&#8599;</span></span><span class="main"><span class="name">${esc(p.name)}</span><span class="desc">${esc(p.desc)}</span></span></a></li>`;
           }
-          const per = p.billing === "yearly" ? " / tahun" : p.billing === "lifetime" ? " / lifetime" : "";
+          const per = p.billing === "yearly" ? " / year" : p.billing === "lifetime" ? " / lifetime" : "";
           const lock = p.access === "member" ? " · <span class=\"lock\">member</span>" : "";
-          return `<li class="prod"><span class="name">${esc(p.name)}${lock}</span><span class="desc">${esc(p.desc)}</span><span class="price">${rp(p.price)}${per}</span><button class="buy" type="button" data-buy="${esc(p.slug)}">bayar qris &#8599;</button></li>`;
+          return `<li class="prod"><span class="name">${esc(p.name)}${lock}</span><span class="desc">${esc(p.desc)}</span><span class="price">${rp(p.price)}${per}</span><button class="buy" type="button" data-buy="${esc(p.slug)}">pay qris &#8599;</button></li>`;
         };
         const prods = d.products || [];
         if ("group" in g.dataset) {
@@ -47,14 +47,14 @@
           }
           g.innerHTML = [...groups.entries()]
             .map(([c, items]) => `<h3 class="tag">//${esc(c)}</h3><ul class="${kind === "device" ? "devgrid" : "links"}">${items.map(tile).join("")}</ul>`)
-            .join("") || `<p class="note">belum ada item.</p>`;
+            .join("") || `<p class="note">no items yet.</p>`;
         } else {
-          g.innerHTML = prods.map(tile).join("") || `<li class="prod"><span class="desc">belum ada item.</span></li>`;
+          g.innerHTML = prods.map(tile).join("") || `<li class="prod"><span class="desc">no items yet.</span></li>`;
         }
       } catch {
         g.innerHTML = "group" in g.dataset
-          ? `<p class="note">gagal memuat — refresh halaman.</p>`
-          : `<li class="prod"><span class="desc">gagal memuat — refresh halaman.</span></li>`;
+          ? `<p class="note">failed to load — refresh the page.</p>`
+          : `<li class="prod"><span class="desc">failed to load — refresh the page.</span></li>`;
       }
     }
   }
@@ -74,7 +74,7 @@
     busy.add(b);
     const orig = b.textContent;
     b.disabled = true;
-    b.textContent = "membuat invoice…";
+    b.textContent = "creating invoice…";
     try {
       const r = await fetch("/api/buy/" + encodeURIComponent(b.dataset.buy), {
         method: "POST",
@@ -83,12 +83,12 @@
       });
       const d = await r.json().catch(() => ({}));
       if (r.status === 401 && d.need_login) {
-        b.textContent = "login dulu…";
+        b.textContent = "login first…";
         location.assign("/member?next=" + encodeURIComponent(location.pathname + location.hash));
         return;
       }
       if (r.ok && d.checkout_url) {
-        b.textContent = "menuju pembayaran…";
+        b.textContent = "redirecting to checkout…";
         location.assign(d.checkout_url);
         setTimeout(() => busy.delete(b), 8000);
         return;
@@ -96,7 +96,7 @@
       throw 0;
     } catch {
       b.classList.add("err");
-      b.textContent = "gagal — coba lagi";
+      b.textContent = "failed — try again";
       setTimeout(() => {
         b.classList.remove("err");
         b.textContent = orig;

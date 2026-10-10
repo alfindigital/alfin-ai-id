@@ -8,3 +8,13 @@ live.html
 links.txt
 porto.html
 shots/
+backups/
+
+# internal ops docs — local only, never publish
+AGENTS.md
+HANDOFF.md
+
+# IDE/editor noise
+.devin/
+.vscode/
+pyrightconfig.json

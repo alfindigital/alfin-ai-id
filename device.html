@@ -1,18 +1,18 @@
 <!doctype html>
-<html lang="id" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>//device · alfin.ai.id</title>
-<meta name="description" content="Device &amp; setup meja kerja yang dipakai Alfin — link marketplace.">
+<meta name="description" content="Alfin's desk setup &amp; devices — marketplace links.">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c0d0f">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f3f1">
 <meta property="og:title" content="//device · alfin.ai.id">
-<meta property="og:description" content="Device &amp; setup meja kerja yang dipakai Alfin — link marketplace.">
+<meta property="og:description" content="Alfin's desk setup &amp; devices — marketplace links.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://alfin.ai.id/device">
 <meta property="og:site_name" content="alfin.ai.id">
-<meta property="og:locale" content="id_ID">
+<meta property="og:locale" content="en_US">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://alfin.ai.id/device">
@@ -39,7 +39,9 @@ body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(
 .ticks i:nth-child(4){bottom:calc(12px + env(safe-area-inset-bottom));right:calc(12px + env(safe-area-inset-right));border-left:0;border-top:0}
 main{position:relative;z-index:1;width:100%;max-width:64rem;padding:clamp(1.25rem,4vw,2.25rem) clamp(1.1rem,4vw,2.5rem) 2.5rem;display:flex;flex-direction:column;min-height:100dvh}
 header{display:flex;justify-content:space-between;align-items:center;padding-bottom:2rem}
-.brand{font-family:"Orbitron",sans-serif;font-weight:800;font-size:.85rem;color:var(--ink);text-decoration:none;letter-spacing:.1em}
+.brand{display:flex;align-items:center;gap:.55rem;font-family:"Orbitron",sans-serif;font-weight:800;font-size:.85rem;color:var(--ink);text-decoration:none;letter-spacing:.1em}
+.b-mark{width:26px;height:26px;border-radius:7px;display:block}
+.brand em{font-style:normal;font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.78em;letter-spacing:.06em;color:var(--accent);margin-left:.12em}
 .cursor{display:inline-block;width:.5em;height:1em;background:var(--accent);vertical-align:-.12em;margin-left:.25em}
 @media (prefers-reduced-motion:no-preference){.cursor{animation:blink 1.15s steps(2,start) infinite}@keyframes blink{50%{opacity:0}}}
 header .tools{display:flex;align-items:center}
@@ -47,12 +49,28 @@ header .tools{display:flex;align-items:center}
 .icon-btn:hover{color:var(--accent)}
 .icon-btn .ic{width:1.2rem;height:1.2rem}
 .icon-btn[hidden]{display:none}
+.menu{position:relative}
+.menu>summary{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;color:var(--ink-2);list-style:none;cursor:pointer;border-radius:8px;transition:color .18s ease}
+.menu>summary::-webkit-details-marker{display:none}
+.menu>summary:hover,.menu[open]>summary{color:var(--accent)}
+.menu>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.menu .ic{width:1.2rem;height:1.2rem}
+.menu-list{position:absolute;top:calc(100% + .45rem);right:0;z-index:20;display:flex;flex-direction:column;min-width:9.5rem;padding:.3rem;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 16px 40px -18px rgba(0,0,0,.55)}
+.menu-list a{display:flex;align-items:center;min-height:34px;padding:0 .65rem;font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.76rem;letter-spacing:.06em;color:var(--ink);text-decoration:none;border-radius:6px;white-space:nowrap}
+.menu-list a .sl{color:var(--accent)}
+.menu-list a:hover{color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.menu-list a.dim{color:var(--ink-2);margin-top:.2rem;padding-top:.45rem;border-top:1px solid var(--line);border-radius:0 0 6px 6px}
+.menu-list a[aria-current]{color:var(--accent)}
+.menu[open] .menu-list{animation:menuin .14s ease-out}
+@keyframes menuin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 [data-theme="dark"] .i-moon{display:none}
 [data-theme="light"] .i-sun{display:none}
-.jumpnav{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:.1rem .9rem;padding:.4rem 0;margin-bottom:1.5rem;background:var(--bg);border-bottom:1px solid var(--line);transition:background-color .25s ease}
-.jumpnav a{display:flex;align-items:center;min-height:44px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.06em;color:var(--ink-2);text-decoration:none;white-space:nowrap;transition:color .18s ease}
+.jumpnav{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:.4rem .5rem;padding:.55rem 0;margin-bottom:1.5rem;background:var(--bg);border-bottom:1px solid var(--line);transition:background-color .25s ease}
+.jumpnav a{display:flex;align-items:center;min-height:40px;padding:0 .7rem;font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.74rem;letter-spacing:.06em;color:var(--ink);text-decoration:none;white-space:nowrap;background:var(--panel);border:1px solid var(--line);border-radius:8px;transition:color .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease}
 .jumpnav a .sl{color:var(--accent)}
-.jumpnav a:hover{color:var(--accent)}
+.jumpnav a:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px -14px color-mix(in srgb,var(--accent) 60%,transparent)}
+.jumpnav a:active{transform:translateY(-2px) scale(.98)}
+.jumpnav a[aria-current]{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
 .tag{font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.82rem;color:var(--accent);letter-spacing:.08em;margin-bottom:.65rem}
 section{margin-bottom:1.9rem}
 .devgrid{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin-bottom:1.7rem}
@@ -92,21 +110,32 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
 <symbol id="i-gh" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
 </defs></svg>
 <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <main>
   <header class="in in-1">
-    <a class="brand" href="/">ALFIN.AI.ID<span class="cursor" aria-hidden="true"></span></a>
+    <a class="brand" href="/" aria-label="alfin.ai.id — home"><img class="b-mark" src="/favicon.svg" alt="" width="26" height="26"><span>ALFIN<em>.AI.ID</em></span><span class="cursor" aria-hidden="true"></span></a>
     <div class="tools">
       <a class="icon-btn" href="https://github.com/alfindigital" target="_blank" rel="noopener" aria-label="GitHub"><svg class="ic"><use href="#i-gh"/></svg></a>
-      <button class="icon-btn" id="themeBtn" type="button" aria-label="Ganti tema" hidden>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle theme" hidden>
         <svg class="ic i-sun"><use href="#i-sun"/></svg>
         <svg class="ic i-moon"><use href="#i-moon"/></svg>
       </button>
+      <details class="menu">
+        <summary aria-label="Site menu"><svg class="ic"><use href="#i-menu"/></svg></summary>
+        <nav class="menu-list" aria-label="Site map">
+          <a href="/"><span class="sl">//</span>index</a>
+          <a href="/gear"><span class="sl">//</span>gear</a>
+          <a href="/device" aria-current="page"><span class="sl">//</span>device</a>
+          <a href="/member"><span class="sl">//</span>member</a>
+          <a class="dim" href="/admin"><span class="sl">//</span>admin</a>
+        </nav>
+      </details>
     </div>
   </header>
 
-  <nav class="jumpnav in in-2" aria-label="Navigasi">
+  <nav class="jumpnav in in-2" aria-label="Navigation">
     <a href="/"><span class="sl">//</span>index</a>
     <a href="/gear"><span class="sl">//</span>gear</a>
     <a href="/device" aria-current="page"><span class="sl">//</span>device</a>
@@ -116,8 +145,8 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
   <section class="in in-3">
     <h2 class="tag">// device</h2>
     <div data-products="device" data-group></div>
-    <noscript><p class="note">butuh JavaScript untuk memuat daftar device.</p></noscript>
-    <p class="note">device &amp; setup yang kupakai — link menuju marketplace official. kembali ke <a href="/">//index</a>.</p>
+    <noscript><p class="note">JavaScript required to load the device list.</p></noscript>
+    <p class="note">devices &amp; setup — links go to official marketplace listings. back to <a href="/">//index</a>.</p>
   </section>
 
   <footer class="in in-4">
