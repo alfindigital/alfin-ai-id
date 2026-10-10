@@ -39,8 +39,7 @@ body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(
 .ticks i:nth-child(4){bottom:calc(12px + env(safe-area-inset-bottom));right:calc(12px + env(safe-area-inset-right));border-left:0;border-top:0}
 main{position:relative;z-index:1;width:100%;max-width:64rem;padding:clamp(1.25rem,4vw,2.25rem) clamp(1.1rem,4vw,2.5rem) 2.5rem;display:flex;flex-direction:column;min-height:100dvh}
 header{display:flex;justify-content:space-between;align-items:center;padding-bottom:2rem}
-.brand{display:flex;align-items:center;gap:.55rem;font-family:"Orbitron",sans-serif;font-weight:800;font-size:.85rem;color:var(--ink);text-decoration:none;letter-spacing:.1em}
-.b-mark{width:26px;height:26px;border-radius:7px;display:block}
+.brand{display:flex;align-items:center;gap:.4rem;font-family:"Orbitron",sans-serif;font-weight:800;font-size:.85rem;color:var(--ink);text-decoration:none;letter-spacing:.1em}
 .brand em{font-style:normal;font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.78em;letter-spacing:.06em;color:var(--accent);margin-left:.12em}
 .cursor{display:inline-block;width:.5em;height:1em;background:var(--accent);vertical-align:-.12em;margin-left:.25em}
 @media (prefers-reduced-motion:no-preference){.cursor{animation:blink 1.15s steps(2,start) infinite}@keyframes blink{50%{opacity:0}}}
@@ -73,9 +72,9 @@ header .tools{display:flex;align-items:center}
 .jumpnav a[aria-current]{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
 .tag{font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:700;font-size:.82rem;color:var(--accent);letter-spacing:.08em;margin-bottom:.65rem}
 section{margin-bottom:1.9rem}
-.links{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:1fr;gap:.55rem}
+.links{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:1fr;gap:.4rem}
 @media(min-width:34rem){.links{grid-template-columns:repeat(3,1fr)}}
-.links a{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"slot meta" "main main";row-gap:.55rem;padding:.75rem .8rem;background:var(--panel);border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);min-height:44px;transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease}
+.links a{display:grid;grid-template-columns:auto 1fr;grid-template-areas:"slot meta" "main main";row-gap:.4rem;padding:.75rem .8rem;background:var(--panel);border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink);min-height:44px;transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease}
 .links a:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 30px -14px color-mix(in srgb,var(--accent) 60%,transparent)}
 .links a:active{transform:translateY(-2px) scale(.99)}
 .slot{grid-area:slot;min-width:1.4rem;display:flex;align-items:center}
@@ -110,7 +109,7 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
 <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <main>
   <header class="in in-1">
-    <a class="brand" href="/" aria-label="alfin.ai.id — home"><img class="b-mark" src="/favicon.svg" alt="" width="26" height="26"><span>ALFIN<em>.AI.ID</em></span><span class="cursor" aria-hidden="true"></span></a>
+    <a class="brand" href="/" aria-label="alfin.ai.id — home"><span>ALFIN<em>.AI.ID</em></span><span class="cursor" aria-hidden="true"></span></a>
     <div class="tools">
       <a class="icon-btn" href="https://github.com/alfindigital" target="_blank" rel="noopener" aria-label="GitHub"><svg class="ic"><use href="#i-gh"/></svg></a>
       <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle theme" hidden>
