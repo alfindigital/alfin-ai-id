@@ -98,4 +98,5 @@ INSERT OR IGNORE INTO products (slug,kind,name,"desc",price,billing,access,url,c
  ('crystalsound','gear','CrystalSound','AI audio cleanup — noise removal & voice enhance.',0,'','public','https://www.crystalsound.ai','tools',100,1),
  ('booltool','gear','Booltool','AI tool suite by Boolv (video, image, copy).',0,'','public','https://booltool.boolv.tech','tools',110,1),
  ('qrio','gear','QR.io','Dynamic QR code generator — custom design + scan tracking.',0,'','public','https://qr.io/','tools',120,1),
+ ('bolt','gear','Bolt','AI-powered full-stack web development sandbox.',0,'','public','https://bolt.cello.so/4NDz7ej9wnt','tools',125,1),
  ('linketo','gear','Linke.to','Free shortlinks & link-in-bio with custom slugs.',0,'','public','https://linke.to','freebie',200,1);
