@@ -3,15 +3,15 @@ account_id = "b534acd3a8238a6391b64da112d23eaf"
 compatibility_date = "2025-10-01"
 main = "src/worker.js"
 
-[vars]
-AUTOPAY_BASE_URL = "https://autopay.web.id"
-RESEND_FROM = "Alfin Store <store@mail.alfindigital.com>"
-ADMIN_NOTIFY = "alfin.pbg@gmail.com"
-
 routes = [
   { pattern = "alfin.ai.id", custom_domain = true },
   { pattern = "www.alfin.ai.id", custom_domain = true },
 ]
+
+[vars]
+AUTOPAY_BASE_URL = "https://autopay.web.id"
+RESEND_FROM = "Alfin Store <store@mail.alfindigital.com>"
+ADMIN_NOTIFY = "alfin.pbg@gmail.com"
 
 [assets]
 directory = "./dist"
