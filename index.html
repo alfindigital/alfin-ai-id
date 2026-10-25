@@ -275,6 +275,13 @@ html{scroll-behavior:smooth}
   margin-bottom:.65rem;
 }
 section{margin-bottom:1.9rem;scroll-margin-top:3.6rem}
+.reel{display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap}
+.reel video{
+  display:block;width:min(100%,15rem);aspect-ratio:9/16;
+  background:var(--panel);border:1px solid var(--line);border-radius:4px;
+  object-fit:cover;
+}
+.reel figcaption{font-size:.82rem;color:var(--accent);font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em}
 .links{
   list-style:none;
   display:grid;
@@ -562,6 +569,16 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
     </ul>
   </section>
   <!-- LINKS:END -->
+
+  <section class="in in-10" id="showcase">
+    <h2 class="tag">// showcase</h2>
+    <figure class="reel">
+      <video autoplay muted loop playsinline preload="metadata" aria-label="Lotmetrik Alert, 33 second reel" poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_540/alfin-ai-id/Lotmetrik-Alert-Full-HD-codex.jpg" data-showcase>
+        <source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/Lotmetrik-Alert-Full-HD-codex.mp4" type="video/mp4">
+      </video>
+      <figcaption>// lotmetrik alert · 33s</figcaption>
+    </figure>
+  </section>
 
   <section class="in in-10" id="paid">
     <h2 class="tag">// paid</h2>

@@ -2,6 +2,9 @@ try{var _t=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme:lig
 addEventListener("DOMContentLoaded",function(){
   var b=document.getElementById("themeBtn");
   if(b){b.hidden=false;b.addEventListener("click",function(){var r=document.documentElement,n=r.dataset.theme==="dark"?"light":"dark";r.dataset.theme=n;try{localStorage.setItem("theme",n)}catch(e){}})}
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches){
+    document.querySelectorAll("video[data-showcase]").forEach(function(v){v.removeAttribute("autoplay");v.pause();v.controls=true});
+  }
   var mn=document.querySelector("details.menu");
   if(mn){
     document.addEventListener("click",function(e){if(mn.open&&!mn.contains(e.target))mn.open=false});
