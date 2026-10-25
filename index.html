@@ -281,6 +281,11 @@ section{margin-bottom:1.9rem;scroll-margin-top:3.6rem}
   background:var(--panel);border:1px solid var(--line);border-radius:4px;
   object-fit:cover;
 }
+.reel video{cursor:pointer}
+.reel-meta{display:flex;align-items:center;gap:.25rem;flex-wrap:wrap}
+.reel-btn .i-play{display:none}
+.reel[data-paused] .reel-btn .i-play{display:block}
+.reel[data-paused] .reel-btn .i-pause{display:none}
 .reel figcaption{font-size:.82rem;color:var(--accent);font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em}
 .links{
   list-style:none;
@@ -444,7 +449,9 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
 <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
 <symbol id="i-web" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></symbol>
-<symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></symbol>
+<symbol id="i-menu"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
 </defs></svg>
 <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <main>
@@ -576,7 +583,13 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
       <video autoplay muted loop playsinline preload="metadata" aria-label="Lotmetrik Alert, 33 second reel" poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_540/alfin-ai-id/Lotmetrik-Alert-Full-HD-codex.jpg" data-showcase>
         <source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/Lotmetrik-Alert-Full-HD-codex.mp4" type="video/mp4">
       </video>
-      <figcaption>// lotmetrik alert · 33s</figcaption>
+      <div class="reel-meta">
+        <figcaption>// lotmetrik alert · 33s</figcaption>
+        <button class="icon-btn reel-btn" type="button" aria-label="Pause video" hidden>
+          <svg class="ic i-pause"><use href="#i-pause"/></svg>
+          <svg class="ic i-play"><use href="#i-play"/></svg>
+        </button>
+      </div>
     </figure>
   </section>
 
