@@ -98,7 +98,7 @@ const css = `.reels{display:grid;grid-template-columns:repeat(2,1fr);gap:.65rem}
 .reel figcaption{
   margin-top:.4rem;font-size:.74rem;color:var(--accent);
   font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.03em;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  line-height:1.35;overflow-wrap:anywhere;
 }`;
 
 let html = fs.readFileSync(INDEX, "utf8");
