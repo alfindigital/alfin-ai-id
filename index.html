@@ -275,18 +275,34 @@ html{scroll-behavior:smooth}
   margin-bottom:.65rem;
 }
 section{margin-bottom:1.9rem;scroll-margin-top:3.6rem}
-.reel{display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap}
+.reels{display:grid;grid-template-columns:repeat(2,1fr);gap:.65rem}
+@media(min-width:34rem){.reels{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:56rem){.reels{grid-template-columns:repeat(4,1fr);gap:.8rem}}
+.reel{position:relative;margin:0;min-width:0}
 .reel video{
-  display:block;width:min(100%,15rem);aspect-ratio:9/16;
+  display:block;width:100%;aspect-ratio:9/16;
   background:var(--panel);border:1px solid var(--line);border-radius:4px;
-  object-fit:cover;
+  object-fit:cover;cursor:pointer;
 }
-.reel video{cursor:pointer}
-.reel-meta{display:flex;align-items:center;gap:.25rem;flex-wrap:wrap}
+.reel-btn{
+  position:absolute;left:50%;top:calc(50% - .9rem);transform:translate(-50%,-50%);
+  display:flex;align-items:center;justify-content:center;
+  width:3rem;height:3rem;padding:0;
+  background:rgba(12,13,15,.62);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:50%;
+  cursor:pointer;transition:opacity .18s ease,background .18s ease;
+}
+.reel-btn:hover{background:var(--accent)}
+.reel-btn .ic{width:1.2rem;height:1.2rem;color:inherit}
 .reel-btn .i-play{display:none}
 .reel[data-paused] .reel-btn .i-play{display:block}
 .reel[data-paused] .reel-btn .i-pause{display:none}
-.reel figcaption{font-size:.82rem;color:var(--accent);font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em}
+.reel:not([data-paused]) .reel-btn{opacity:0}
+.reel:not([data-paused]):hover .reel-btn,.reel:not([data-paused]) .reel-btn:focus-visible{opacity:1}
+.reel figcaption{
+  margin-top:.4rem;font-size:.74rem;color:var(--accent);
+  font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.03em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
 .links{
   list-style:none;
   display:grid;
@@ -579,18 +595,125 @@ footer .icon-btn .ic{width:1.25rem;height:1.25rem}
 
   <section class="in in-10" id="showcase">
     <h2 class="tag">// showcase</h2>
-    <figure class="reel">
-      <video autoplay muted loop playsinline preload="metadata" aria-label="Lotmetrik Alert, 33 second reel" poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_540/alfin-ai-id/Lotmetrik-Alert-Full-HD-codex.jpg" data-showcase>
-        <source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/Lotmetrik-Alert-Full-HD-codex.mp4" type="video/mp4">
-      </video>
-      <div class="reel-meta">
+    <!-- SHOWCASE:START -->
+    <div class="reels">
+      <figure class="reel" data-title="IDX News">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/idxnews/01-video-IDXNews-v1-HD.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/idxnews/01-video-IDXNews-v1-HD.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play IDX News" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// idx news · 37s</figcaption>
+      </figure>
+      <figure class="reel" data-title="IDXBT pemegang saham">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/idxbt-pemegang-saham/01-video-idxbt.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/idxbt-pemegang-saham/01-video-idxbt.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play IDXBT pemegang saham" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// idxbt pemegang saham · 37s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Foreign Midday bot">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/fmid-bot-asing/01-video-fmid.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/fmid-bot-asing/01-video-fmid.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Foreign Midday bot" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// foreign midday bot · 39s</figcaption>
+      </figure>
+      <figure class="reel" data-title="MailTempo">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/mailtempo/MailTempo-HD.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/mailtempo/MailTempo-HD.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play MailTempo" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// mailtempo · 27s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Lezat menu online">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/lezat-menu-online/01-video-lezat.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/lezat-menu-online/01-video-lezat.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Lezat menu online" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// lezat menu online · 39s</figcaption>
+      </figure>
+      <figure class="reel" data-title="DomainLens techstack">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/domainlens-techstack/DomainLens-Techstack-HD.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/domainlens-techstack/DomainLens-Techstack-HD.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play DomainLens techstack" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// domainlens techstack · 27s</figcaption>
+      </figure>
+      <figure class="reel" data-title="FeedFlow">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/feedflow/FeedFlow-v1-HD.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/feedflow/FeedFlow-v1-HD.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play FeedFlow" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// feedflow · 30s</figcaption>
+      </figure>
+      <figure class="reel" data-title="ResiPaket seller">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/resipaket-seller/ResiPaket-Seller-D3-HD.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/resipaket-seller/ResiPaket-Seller-D3-HD.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play ResiPaket seller" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// resipaket seller · 33s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Universal Downloader">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/universal-downloader/Universal-Downloader-v1-HD.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/universal-downloader/Universal-Downloader-v1-HD.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Universal Downloader" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// universal downloader · 20s</figcaption>
+      </figure>
+      <figure class="reel" data-title="ResiPaket">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/resipaket/ResiPaket-v1-HD.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/resipaket/ResiPaket-v1-HD.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play ResiPaket" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// resipaket · 35s</figcaption>
+      </figure>
+      <figure class="reel" data-title="DomainLens research watchlist">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/domainlens-research-watchlist/01-video-domainlens.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/domainlens-research-watchlist/01-video-domainlens.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play DomainLens research watchlist" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// domainlens research watchlist · 33s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Tiket Mars Musk 2017">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/tiket-mars-musk-2017/tiket-mars-musk-2017_2026-10-24_20-48-17.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/tiket-mars-musk-2017/tiket-mars-musk-2017_2026-10-24_20-48-17.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Tiket Mars Musk 2017" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// tiket mars musk 2017 · 43s</figcaption>
+      </figure>
+      <figure class="reel" data-title="DomainLens portfolio">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/domainlens-portfolio/DomainLens-Portfolio-HD-v1.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/domainlens-portfolio/DomainLens-Portfolio-HD-v1.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play DomainLens portfolio" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// domainlens portfolio · 36s</figcaption>
+      </figure>
+      <figure class="reel" data-title="MSCI peluang turun">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/msci-peluang-turun/01-video-koreksi-msci.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/msci-peluang-turun/01-video-koreksi-msci.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play MSCI peluang turun" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// msci peluang turun · 54s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Dividen yield saat anjlok">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/dividen-yield-saat-anjlok/01-video-dividen-yield.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/dividen-yield-saat-anjlok/01-video-dividen-yield.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Dividen yield saat anjlok" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// dividen yield saat anjlok · 43s</figcaption>
+      </figure>
+      <figure class="reel" data-title="POV: kalau jadi MSCI">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/msci-pov-kalau-jadi-msci/01-video-pov-msci.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/msci-pov-kalau-jadi-msci/01-video-pov-msci.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play POV: kalau jadi MSCI" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// pov: kalau jadi msci · 52s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Lotmetrik Alert">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/Lotmetrik-Alert-Full-HD-codex.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/Lotmetrik-Alert-Full-HD-codex.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Lotmetrik Alert" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
         <figcaption>// lotmetrik alert · 33s</figcaption>
-        <button class="icon-btn reel-btn" type="button" aria-label="Pause video" hidden>
-          <svg class="ic i-pause"><use href="#i-pause"/></svg>
-          <svg class="ic i-play"><use href="#i-play"/></svg>
-        </button>
-      </div>
-    </figure>
+      </figure>
+      <figure class="reel" data-title="Gajimu punya saham">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/gajimu-punya-saham/01-video-saham-turun.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/gajimu-punya-saham/01-video-saham-turun.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Gajimu punya saham" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// gajimu punya saham · 44s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Avg Lotmetrik">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/avg-lotmetrik/avg-lotmetrik-claude-marker-v1.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/avg-lotmetrik/avg-lotmetrik-claude-marker-v1.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Avg Lotmetrik" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// avg lotmetrik · 43s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Swimma app custom">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/swimma-app-custom/swimma-app-custom-v2.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/swimma-app-custom/swimma-app-custom-v2.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Swimma app custom" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// swimma app custom · 48s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Right issue nggak tebus rugi">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/rightissue-nggak-tebus-rugi/rightissue-nggak-tebus-rugi-v2.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/rightissue-nggak-tebus-rugi/rightissue-nggak-tebus-rugi-v2.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Right issue nggak tebus rugi" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// right issue nggak tebus rugi · 51s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Drawdown Lotmetrik">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/drawdown-lotmetrik/drawdown-lotmetrik-v2.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/drawdown-lotmetrik/drawdown-lotmetrik-v2.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Drawdown Lotmetrik" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// drawdown lotmetrik · 44s</figcaption>
+      </figure>
+      <figure class="reel" data-title="Benang kusut MSCI">
+        <video controls preload="none" playsinline poster="https://res.cloudinary.com/cloud-id/video/upload/so_2,f_jpg,w_420/alfin-ai-id/benang-kusut-msci/benang-kusut-ihsg-reel.jpg"><source src="https://res.cloudinary.com/cloud-id/video/upload/f_auto,q_auto,w_540/alfin-ai-id/benang-kusut-msci/benang-kusut-ihsg-reel.mp4" type="video/mp4"></video>
+        <button class="reel-btn" type="button" aria-label="Play Benang kusut MSCI" hidden><svg class="ic i-pause"><use href="#i-pause"/></svg><svg class="ic i-play"><use href="#i-play"/></svg></button>
+        <figcaption>// benang kusut msci · 68s</figcaption>
+      </figure>
+    </div>
+    <!-- SHOWCASE:END -->
   </section>
 
   <section class="in in-10" id="paid">
