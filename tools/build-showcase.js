@@ -1,8 +1,10 @@
 // Generate the // showcase gallery from Studio manifest.csv and rewrite it into alfin.ai.id/index.html
+console.error("Generator legacy dinonaktifkan. Tambah video di Alfindigital/src/content/videos.ts; baca specs/VIDEO-PORTFOLIO.md.");
+process.exit(1);
 const fs = require("fs"), path = require("path"), cp = require("child_process");
 const RESULT = "C:/Users/GEEKOM A8/Documents/Studio/result";
 const MANIFEST = "C:/Users/GEEKOM A8/Documents/Studio/apps-tooling/cloudinary-upload/manifest.csv";
-const INDEX = "C:/Users/GEEKOM A8/Documents/Apps/alfin.ai.id/index.html";
+const INDEX = path.resolve(__dirname, "..", "index.html");
 const BASE = "https://res.cloudinary.com/cloud-id/video/upload";
 
 const TITLES = {

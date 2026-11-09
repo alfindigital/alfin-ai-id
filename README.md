@@ -1,5 +1,7 @@
 # alfin.ai.id
 
+Lokasi sejak 9 November 2026: `Alfindigital/legacy/alfin-ai-id`. Repo dan riwayat lama dipertahankan. Galeri aktif berada di `../../src/content/videos.ts`; petunjuknya `../../specs/VIDEO-PORTFOLIO.md`. Generator showcase lama sengaja menolak eksekusi.
+
 Sejak 1 Nov 2026 domain ini **pengalih**, bukan situs: semua alamat `alfin.ai.id` dan `www.alfin.ai.id` dialihkan 301 ke `https://porto.alfindigital.com/` (`/gear` ke `/gear`). Keputusan owner 1 Nov 2026: porto jadi satu-satunya rumah portofolio, karena daftar karya di sini kembar dengan porto dan tokonya 0 order lunas.
 
 ## Status
